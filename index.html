@@ -2,74 +2,51 @@
 <html lang="th">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4PS89NXG6X"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4PS89NXG6X');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4PS89NXG6X"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4PS89NXG6X');
+    </script>
     <!-- End Code -->
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VETx | Vet Diagnostic Case Simulation Platform</title>
+    <title>VETx | AI Medical Simulation</title>
     
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDKs (ถ้าต้องการใช้ในอนาคต) -->
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         window.FirebaseApp = {
-            db: null,
-            auth: null,
-            user: null,
-            appId: 'vetx-prod-ai',
-            
+            db: null, auth: null, user: null, appId: 'vetx-prod-ai',
             async init() {
                 try {
                     const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-                    if (!Object.keys(firebaseConfig).length) return; // Offline Mode
-
+                    if (!Object.keys(firebaseConfig).length) return; 
                     const app = initializeApp(firebaseConfig);
                     this.auth = getAuth(app);
                     this.db = getFirestore(app);
-
-                    if (window.__initial_auth_token) {
-                        await signInWithCustomToken(this.auth, window.__initial_auth_token);
-                    } else {
-                        await signInAnonymously(this.auth);
-                    }
-
-                    onAuthStateChanged(this.auth, (user) => {
-                        this.user = user;
-                    });
-
-                } catch (e) {
-                    console.log("Offline Mode Active");
-                }
+                    if (window.__initial_auth_token) { await signInWithCustomToken(this.auth, window.__initial_auth_token); } 
+                    else { await signInAnonymously(this.auth); }
+                    onAuthStateChanged(this.auth, (user) => { this.user = user; });
+                } catch (e) { console.log("Offline Mode Active"); }
             },
-
             async saveProgress(vetName, level, totalCasesSolved) {
                 if (!this.db || !this.user) return;
                 try {
                     const userRef = doc(this.db, 'artifacts', this.appId, 'public', 'data', 'leaderboard', this.user.uid);
-                    await setDoc(userRef, {
-                        name: vetName,
-                        level: level,
-                        totalCasesSolved: totalCasesSolved,
-                        updatedAt: serverTimestamp()
-                    });
+                    await setDoc(userRef, { name: vetName, level: level, totalCasesSolved: totalCasesSolved, updatedAt: serverTimestamp() });
                 } catch (e) { }
             },
-
             async getLeaderboard() {
                 if (!this.db) return [];
                 try {
@@ -84,71 +61,41 @@
                 } catch (e) { return []; }
             }
         };
-
         window.FirebaseApp.init();
     </script>
 
     <style>
-        /* ===================================
-           CORE STYLES
-           =================================== */
-        body { 
-            font-family: 'Sarabun', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-            overscroll-behavior-y: none; 
-        }
-        
-        h1, h2, h3, h4, h5, .font-heading { 
-            font-family: 'Kanit', sans-serif; 
-        }
-        
+        /* CORE STYLES */
+        body { font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+        h1, h2, h3, h4, h5, .font-heading { font-family: 'Kanit', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* ===================================
-           COMPONENT STYLES
-           =================================== */
-        .mobile-card { 
-            @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-4; 
-        }
-
+        /* COMPONENTS */
+        .mobile-card { @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-4; }
         .nav-item-desktop.active { @apply border-r-4 border-teal-600 bg-teal-50 text-teal-700 font-semibold; }
         .nav-item-desktop { @apply border-r-4 border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all; }
         .nav-item-mobile.active { @apply text-teal-600; }
         .nav-item-mobile.active i { @apply fill-current; }
         .nav-item-mobile { @apply text-slate-400 flex flex-col items-center justify-center gap-1 transition-colors; }
 
-        /* ===================================
-           ANIMATIONS & BADGES
-           =================================== */
+        /* ANIMATIONS */
         .chat-modal { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
         .chat-open { transform: translateY(0); }
         .chat-closed { transform: translateY(100%); }
-        
         .score-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes pop { 50% { transform: scale(1.3); } }
-        
         .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; transform: translateY(10px); }
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
-
         .timer-low { animation: pulse-red 1s infinite; }
         @keyframes pulse-red { 0%, 100% { background-color: #dc2626; } 50% { background-color: #991b1b; } }
-
-        .level-badge-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #8a6d0b; border: 1px solid #eec028; }
-        .level-badge-silver { background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%); color: #424242; border: 1px solid #9e9e9e; }
-        .level-badge-bronze { background: linear-gradient(135deg, #fcead7 0%, #f5d0a9 100%); color: #8d5c2c; border: 1px solid #e6b88a; }
-        
-        /* AI Typing Indicator */
-        .typing-dot {
-            animation: typing 1.4s infinite ease-in-out both;
-        }
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+        .level-badge-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #8a6d0b; border: 1px solid #eec028; }
+        .level-badge-silver { background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%); color: #424242; border: 1px solid #9e9e9e; }
     </style>
 </head>
 <body class="bg-slate-50 h-[100dvh] flex flex-col overflow-hidden text-slate-800">
@@ -224,7 +171,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="absolute -top-6 -right-6 w-32 h-32 bg-teal-50 rounded-full opacity-60 z-0"></div>
                     <div class="mt-5 pt-4 border-t border-slate-100 relative z-10">
                         <div class="flex items-center gap-2 mb-1.5">
                             <div class="bg-red-100 p-1 rounded"><i data-lucide="alert-circle" class="w-3 h-3 text-red-600"></i></div>
@@ -334,7 +280,7 @@
             <div onclick="ChatSystem.toggle()" class="w-full h-12 flex items-center justify-center cursor-pointer bg-slate-50/80 backdrop-blur border-b border-slate-100 active:bg-slate-100"><div class="w-12 h-1.5 bg-slate-300 rounded-full"></div></div>
             <div class="px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-white">
                 <div><h3 class="font-heading font-bold text-lg text-slate-800">Owner Chat</h3><p class="text-xs text-slate-400">คุยกับเจ้าของสัตว์ (AI Enabled)</p></div>
-                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span><span class="text-[10px] text-slate-500 font-bold">Online</span></div>
+                <div class="flex items-center gap-1.5"><span id="chat-status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span><span class="text-[10px] text-slate-500 font-bold">Online</span></div>
             </div>
             <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50"></div>
             <div class="bg-white pt-3 border-t border-slate-100">
@@ -416,12 +362,13 @@
             </div>
             <div class="p-6">
                 <div class="bg-gradient-to-br from-orange-50 to-white p-5 rounded-2xl border border-orange-100 shadow-sm mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-orange-100 rounded-full -mr-8 -mt-8 opacity-50"></div>
                     <div class="relative z-10">
                         <div class="flex items-center gap-2 mb-3">
                             <i data-lucide="quote" class="w-5 h-5 text-orange-400 fill-current"></i>
                             <span class="text-xs font-bold text-orange-800 uppercase tracking-wide">สถานการณ์</span>
                         </div>
-                        <p id="intro-narrative" class="text-slate-700 font-medium text-lg leading-relaxed italic">"หมอช่วยด้วย! น้องอาเจียนไม่หยุดเลย..."</p>
+                        <p id="intro-narrative" class="text-slate-700 font-medium text-lg leading-relaxed italic">"..."</p>
                         <div class="mt-4 flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-sm"><img id="intro-img-mini" src="" class="w-full h-full object-cover"></div>
                             <div><div id="intro-patient-name" class="text-base font-bold text-slate-800">น้อง...</div></div>
@@ -466,8 +413,10 @@
 
     <!-- LOGIC -->
     <script>
-        const CONFIG = { BASE_TIME: 90 };
+        // *** IMPORTANT: ใส่ API KEY ตรงนี้ ***
         const apiKey = "AIzaSyADn4BDF3lj4wTbuy0AvcI0Qy6RNTsR5N0"; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด เช่น "AIzaS..."
+
+        const CONFIG = { BASE_TIME: 90 };
 
         // DATA
         const CASE_DATA = {
@@ -559,180 +508,101 @@
                     this.vetName = nameInput;
                     document.getElementById('register-modal').classList.add('hidden');
                     document.getElementById('tutorial-modal').classList.remove('hidden');
-                } else {
-                    alert('กรุณาตั้งชื่อเพื่อเล่นเกม');
-                }
+                } else { alert('กรุณาตั้งชื่อเพื่อเล่นเกม'); }
             },
-
-            setCurrentCase(caseData) {
-                this.currentCase = caseData;
-            },
-
+            setCurrentCase(caseData) { this.currentCase = caseData; },
             addWin() {
                 this.casesSolvedInLevel++;
                 this.totalCasesSolved++;
-                
                 const required = this.getCasesRequiredForNextLevel();
                 let leveledUp = false;
-                
                 if (this.casesSolvedInLevel >= required) {
                     this.currentLevel++;
-                    this.casesSolvedInLevel = 0; // Reset progress for new level
+                    this.casesSolvedInLevel = 0;
                     leveledUp = true;
                 }
-                
-                // Save to Firebase
-                if(window.FirebaseApp) {
-                    window.FirebaseApp.saveProgress(this.vetName, this.currentLevel, this.totalCasesSolved);
-                }
-                
+                if(window.FirebaseApp) window.FirebaseApp.saveProgress(this.vetName, this.currentLevel, this.totalCasesSolved);
                 this.updateLevelUI();
                 return leveledUp;
             },
-            
-            getCasesRequiredForNextLevel() {
-                return this.currentLevel + 1;
-            },
-
+            getCasesRequiredForNextLevel() { return this.currentLevel + 1; },
             updateLevelUI() {
                 document.getElementById('level-num').innerText = this.currentLevel;
-                
                 const required = this.getCasesRequiredForNextLevel();
                 const percentage = (this.casesSolvedInLevel / required) * 100;
-                
                 document.getElementById('level-progress-bar').style.width = `${percentage}%`;
                 document.getElementById('level-progress-text').innerText = `${this.casesSolvedInLevel}/${required} Wins`;
                 
-                // Color badges
                 const levelContainer = document.getElementById('level-container');
-                if (this.currentLevel >= 6) {
-                    levelContainer.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-gold";
-                } else if (this.currentLevel >= 3) {
-                    levelContainer.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-silver";
-                } else {
-                    levelContainer.className = "flex items-center bg-slate-100 rounded-full border border-slate-200 p-1 pl-3 pr-2 gap-2";
-                }
+                if (this.currentLevel >= 6) levelContainer.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-gold";
+                else if (this.currentLevel >= 3) levelContainer.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-silver";
+                else levelContainer.className = "flex items-center bg-slate-100 rounded-full border border-slate-200 p-1 pl-3 pr-2 gap-2";
             },
-
-            toggleChat() {
-                this.isChatOpen = !this.isChatOpen;
-                return this.isChatOpen;
-            },
-
-            setTimerInterval(interval) {
-                this.timerInterval = interval;
-            },
-
-            clearTimer() {
-                if (this.timerInterval) {
-                    clearInterval(this.timerInterval);
-                    this.timerInterval = null;
-                }
-            }
+            toggleChat() { this.isChatOpen = !this.isChatOpen; return this.isChatOpen; },
+            setTimerInterval(interval) { this.timerInterval = interval; },
+            clearTimer() { if (this.timerInterval) { clearInterval(this.timerInterval); this.timerInterval = null; } }
         };
 
         // UI MODULES
         const Navigation = {
             showSection(sectionId) {
-                // Update mobile navigation
-                document.querySelectorAll('.nav-item-mobile').forEach(btn => {
-                    btn.classList.remove('active', 'text-teal-600');
-                    btn.classList.add('text-slate-400');
-                });
+                document.querySelectorAll('.nav-item-mobile').forEach(btn => { btn.classList.remove('active', 'text-teal-600'); btn.classList.add('text-slate-400'); });
                 const mobileBtn = document.getElementById(`nav-m-${sectionId}`);
-                if (mobileBtn) {
-                    mobileBtn.classList.add('active', 'text-teal-600');
-                    mobileBtn.classList.remove('text-slate-400');
-                }
-
-                // Update desktop navigation
-                document.querySelectorAll('.nav-item-desktop').forEach(btn => {
-                    btn.classList.remove('active');
-                });
+                if (mobileBtn) { mobileBtn.classList.add('active', 'text-teal-600'); mobileBtn.classList.remove('text-slate-400'); }
+                
+                document.querySelectorAll('.nav-item-desktop').forEach(btn => btn.classList.remove('active'));
                 const desktopBtn = document.getElementById(`nav-d-${sectionId}`);
-                if (desktopBtn) {
-                    desktopBtn.classList.add('active');
-                }
+                if (desktopBtn) desktopBtn.classList.add('active');
 
-                // Show/hide sections
-                const sections = ['history', 'physical', 'lab', 'imaging', 'diagnosis'];
-                sections.forEach(section => {
-                    const element = document.getElementById(`section-${section}`);
-                    if (section === sectionId) {
-                        element.classList.remove('hidden');
-                    } else {
-                        element.classList.add('hidden');
-                    }
+                ['history', 'physical', 'lab', 'imaging', 'diagnosis'].forEach(s => {
+                    const el = document.getElementById(`section-${s}`);
+                    if (s === sectionId) el.classList.remove('hidden'); else el.classList.add('hidden');
                 });
             }
         };
 
-        // ===================================
-        // MEDICAL EXAMINATION MODULE
-        // ===================================
         const Examination = {
             perform(part) {
                 if (document.getElementById(`phys-res-${part}`)) return;
-
                 const result = AppState.currentCase.results.physical[part];
-                const resultDiv = document.createElement('div');
-                resultDiv.id = `phys-res-${part}`;
-                resultDiv.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-3 text-sm fade-in border-l-4 border-l-teal-500";
-                resultDiv.innerHTML = `<strong class="text-teal-700 block mb-1">${part.toUpperCase()}</strong>${result}`;
-                document.getElementById('physical-results').prepend(resultDiv);
+                const div = document.createElement('div');
+                div.id = `phys-res-${part}`;
+                div.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-3 text-sm fade-in border-l-4 border-l-teal-500";
+                div.innerHTML = `<strong class="text-teal-700 block mb-1">${part.toUpperCase()}</strong>${result}`;
+                document.getElementById('physical-results').prepend(div);
                 lucide.createIcons();
             }
         };
 
-        // ===================================
-        // LABORATORY MODULE
-        // ===================================
         const Laboratory = {
             runTest(testType) {
                 if (document.getElementById(`lab-res-${testType}`)) return;
-
                 const result = AppState.currentCase.results.lab[testType];
                 const container = document.getElementById('lab-results');
-                
-                if (container.innerText.includes('ยังไม่ได้ส่งตรวจ')) {
-                    container.innerHTML = '';
-                }
-                
-                const resultDiv = document.createElement('div');
-                resultDiv.id = `lab-res-${testType}`;
-                resultDiv.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-2 text-sm fade-in flex justify-between items-center";
-                resultDiv.innerHTML = `
-                    <strong class="text-slate-600">${testType.toUpperCase()}</strong>
-                    <span class="text-slate-800 font-medium">${result}</span>
-                `;
-                container.appendChild(resultDiv);
+                if (container.innerText.includes('ยังไม่ได้ส่งตรวจ')) container.innerHTML = '';
+                const div = document.createElement('div');
+                div.id = `lab-res-${testType}`;
+                div.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-2 text-sm fade-in flex justify-between items-center";
+                div.innerHTML = `<strong class="text-slate-600">${testType.toUpperCase()}</strong><span class="text-slate-800 font-medium">${result}</span>`;
+                container.appendChild(div);
                 lucide.createIcons();
             }
         };
 
-        // ===================================
-        // IMAGING MODULE
-        // ===================================
         const Imaging = {
             runStudy(studyType) {
                 if (document.getElementById(`img-res-${studyType}`)) return;
-
                 const result = AppState.currentCase.results.imaging[studyType];
-                const resultDiv = document.createElement('div');
-                resultDiv.id = `img-res-${studyType}`;
-                resultDiv.className = "bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono border-l-4 border-teal-500 fade-in shadow-lg";
-                resultDiv.innerHTML = `
-                    <div class="text-teal-400 font-bold mb-1 uppercase tracking-widest text-[10px]">RADIOLOGY REPORT</div>
-                    ${result}
-                `;
-                document.getElementById('imaging-results').appendChild(resultDiv);
+                const div = document.createElement('div');
+                div.id = `img-res-${studyType}`;
+                div.className = "bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono border-l-4 border-teal-500 fade-in shadow-lg";
+                div.innerHTML = `<div class="text-teal-400 font-bold mb-1 uppercase tracking-widest text-[10px]">RADIOLOGY REPORT</div>${result}`;
+                document.getElementById('imaging-results').appendChild(div);
                 lucide.createIcons();
             }
         };
 
-        // ===================================
-        // CHAT SYSTEM MODULE
-        // ===================================
+        // AI CHAT SYSTEM
         const ChatSystem = {
             chatHistory: [],
             
@@ -741,38 +611,21 @@
                 const overlay = document.getElementById('chat-overlay');
                 const fabMobile = document.getElementById('chat-fab-mobile');
                 const fabDesktop = document.getElementById('chat-fab-desktop');
-                const badgeMobile = document.getElementById('chat-badge-mobile');
-                const badgeDesktop = document.getElementById('chat-badge-desktop');
-
                 const isOpen = AppState.toggleChat();
 
                 if (isOpen) {
-                    modal.classList.remove('chat-closed');
-                    modal.classList.add('chat-open');
-                    overlay.classList.remove('hidden');
-                    if (fabMobile) {
-                        fabMobile.classList.add('scale-0');
-                        badgeMobile.classList.add('hidden');
-                    }
-                    if (fabDesktop) {
-                        fabDesktop.classList.add('scale-0');
-                        badgeDesktop.classList.add('hidden');
-                    }
+                    modal.classList.remove('chat-closed'); modal.classList.add('chat-open'); overlay.classList.remove('hidden');
+                    if(fabMobile) fabMobile.classList.add('scale-0'); if(fabDesktop) fabDesktop.classList.add('scale-0');
                 } else {
-                    modal.classList.add('chat-closed');
-                    modal.classList.remove('chat-open');
-                    overlay.classList.add('hidden');
-                    if (fabMobile) fabMobile.classList.remove('scale-0');
-                    if (fabDesktop) fabDesktop.classList.remove('scale-0');
+                    modal.classList.add('chat-closed'); modal.classList.remove('chat-open'); overlay.classList.add('hidden');
+                    if(fabMobile) fabMobile.classList.remove('scale-0'); if(fabDesktop) fabDesktop.classList.remove('scale-0');
                 }
             },
 
             async send(question = null, answer = null) {
                 const input = document.getElementById('chat-input');
                 const text = question || input.value.trim();
-                
                 if (!text) return;
-                
                 if (!question) input.value = '';
                 
                 this.addMessage('user', text);
@@ -895,14 +748,10 @@
 
             addMessage(role, text) {
                 const container = document.getElementById('chat-container');
-                const messageDiv = document.createElement('div');
-                
-                messageDiv.className = role === 'user'
-                    ? "bg-teal-600 text-white p-3 rounded-2xl rounded-tr-none text-sm self-end ml-auto max-w-[85%] shadow-sm fade-in"
-                    : "bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm fade-in";
-                
-                messageDiv.innerText = text;
-                container.appendChild(messageDiv);
+                const div = document.createElement('div');
+                div.className = role === 'user' ? "bg-teal-600 text-white p-3 rounded-2xl rounded-tr-none text-sm self-end ml-auto max-w-[85%] shadow-sm fade-in" : "bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm fade-in";
+                div.innerText = text;
+                container.appendChild(div);
                 container.scrollTop = container.scrollHeight;
             },
 
@@ -924,13 +773,12 @@
             setupSuggestions() {
                 const container = document.getElementById('chat-suggestions');
                 container.innerHTML = '';
-                
                 AppState.currentCase.chat.qa_pairs.forEach(pair => {
-                    const button = document.createElement('button');
-                    button.className = "flex-shrink-0 bg-white border border-teal-100 text-teal-700 px-3 py-1.5 rounded-full text-[11px] font-bold hover:bg-teal-50 hover:border-teal-300 transition whitespace-nowrap shadow-sm";
-                    button.innerText = pair.question;
-                    button.onclick = () => this.send(pair.question);
-                    container.appendChild(button);
+                    const btn = document.createElement('button');
+                    btn.className = "flex-shrink-0 bg-white border border-teal-100 text-teal-700 px-3 py-1.5 rounded-full text-[11px] font-bold hover:bg-teal-50 hover:border-teal-300 transition whitespace-nowrap shadow-sm";
+                    btn.innerText = pair.question;
+                    btn.onclick = () => this.send(pair.question);
+                    container.appendChild(btn);
                 });
             },
             
@@ -941,215 +789,113 @@
             }
         };
 
-        // ===================================
-        // TIMER MODULE
-        // ===================================
         const TimerController = {
             start(seconds) {
                 this.stop();
                 let timeLeft = seconds;
                 this.update(timeLeft);
-                
                 const interval = setInterval(() => {
                     timeLeft--;
                     this.update(timeLeft);
-                    
-                    if (timeLeft <= 0) {
-                        this.stop();
-                        document.getElementById('timeout-modal').classList.remove('hidden');
-                    }
+                    if (timeLeft <= 0) { this.stop(); document.getElementById('timeout-modal').classList.remove('hidden'); }
                 }, 1000);
-                
                 AppState.setTimerInterval(interval);
             },
-
-            stop() {
-                AppState.clearTimer();
-            },
-
+            stop() { AppState.clearTimer(); },
             update(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                const display = document.getElementById('timer-display');
-                const badge = document.getElementById('timer-badge');
-                
-                display.innerText = `${minutes}:${secs < 10 ? '0' + secs : secs}`;
-                
-                if (seconds < 30) {
-                    badge.classList.remove('bg-slate-800');
-                    badge.classList.add('bg-red-600', 'timer-low');
-                } else {
-                    badge.classList.add('bg-slate-800');
-                    badge.classList.remove('bg-red-600', 'timer-low');
-                }
+                const m = Math.floor(seconds / 60); const s = seconds % 60;
+                const display = document.getElementById('timer-display'); const badge = document.getElementById('timer-badge');
+                display.innerText = `${m}:${s < 10 ? '0' + s : s}`;
+                if (seconds < 30) { badge.classList.remove('bg-slate-800'); badge.classList.add('bg-red-600', 'timer-low'); }
+                else { badge.classList.add('bg-slate-800'); badge.classList.remove('bg-red-600', 'timer-low'); }
             }
         };
 
-        // ===================================
-        // DIAGNOSIS MODULE
-        // ===================================
         const DiagnosisHandler = {
             submit() {
-                const selectedDiag = document.getElementById('final-diag').value;
-                const selectedTreat = document.getElementById('final-treat').value;
-                
-                if (!selectedDiag || !selectedTreat) {
-                    alert('กรุณาเลือกการวินิจฉัยและการรักษา');
-                    return;
-                }
-                
+                const diag = document.getElementById('final-diag').value;
+                const treat = document.getElementById('final-treat').value;
+                if (!diag || !treat) { alert('กรุณาเลือกการวินิจฉัยและการรักษา'); return; }
                 TimerController.stop();
+                const correct = (diag === AppState.currentCase.correct.diag && treat === AppState.currentCase.correct.treat);
                 
-                const currentCase = AppState.currentCase;
-                const isCorrect = (
-                    selectedDiag === currentCase.correct.diag && 
-                    selectedTreat === currentCase.correct.treat
-                );
-                
-                this.showResults(isCorrect);
-            },
-
-            showResults(isCorrect) {
                 const modal = document.getElementById('score-modal');
                 const header = document.getElementById('result-header');
-                const iconContainer = document.getElementById('result-icon-container');
+                const icon = document.getElementById('result-icon-container');
                 const title = document.getElementById('result-title');
-                const description = document.getElementById('result-desc');
+                const desc = document.getElementById('result-desc');
                 const badge = document.getElementById('result-badge');
                 
-                if (isCorrect) {
+                if (correct) {
                     const leveledUp = AppState.addWin();
-                    
                     header.className = "bg-green-600 p-10 text-white text-center";
-                    iconContainer.innerHTML = '<div class="bg-white/20 p-4 rounded-full inline-block"><i data-lucide="check-circle" class="w-12 h-12 text-white"></i></div>';
+                    icon.innerHTML = '<div class="bg-white/20 p-4 rounded-full inline-block"><i data-lucide="check-circle" class="w-12 h-12 text-white"></i></div>';
                     title.innerText = "ถูกต้อง!";
-                    
                     if (leveledUp) {
-                         description.innerHTML = `ยินดีด้วย! คุณเลื่อนขั้นเป็น <strong class="text-yellow-600">Level ${AppState.currentLevel}</strong>`;
+                         desc.innerHTML = `ยินดีด้วย! คุณเลื่อนขั้นเป็น <strong class="text-yellow-600">Level ${AppState.currentLevel}</strong>`;
                          badge.innerHTML = '<i data-lucide="chevrons-up" class="w-3 h-3"></i> LEVEL UP!';
-                         badge.classList.remove('hidden', 'bg-red-500');
-                         badge.classList.add('bg-yellow-500');
+                         badge.classList.remove('hidden', 'bg-red-500'); badge.classList.add('bg-yellow-500');
                     } else {
-                         description.innerText = "วินิจฉัยและรักษาได้ถูกต้องแม่นยำ";
+                         desc.innerText = "วินิจฉัยและรักษาได้ถูกต้องแม่นยำ";
                          badge.innerHTML = '<i data-lucide="thumbs-up" class="w-3 h-3"></i> Progress +1';
                          badge.classList.remove('hidden');
                     }
-                    
                 } else {
                     header.className = "bg-red-600 p-10 text-white text-center";
-                    iconContainer.innerHTML = '<div class="bg-white/20 p-4 rounded-full inline-block"><i data-lucide="x-circle" class="w-12 h-12 text-white"></i></div>';
-                    title.innerText = "ยังไม่ถูกต้อง";
-                    description.innerText = "ลองทบทวนผลตรวจใหม่อีกครั้ง";
-                    badge.classList.add('hidden');
+                    icon.innerHTML = '<div class="bg-white/20 p-4 rounded-full inline-block"><i data-lucide="x-circle" class="w-12 h-12 text-white"></i></div>';
+                    title.innerText = "ยังไม่ถูกต้อง"; desc.innerText = "ลองทบทวนผลตรวจใหม่อีกครั้ง"; badge.classList.add('hidden');
                 }
-                
                 document.getElementById('ans-diag').innerText = AppState.currentCase.correct.diag;
                 document.getElementById('ans-treat').innerText = AppState.currentCase.correct.treat;
-                
                 modal.classList.remove('hidden');
                 lucide.createIcons();
             }
         };
 
-        // ===================================
-        // LEADERBOARD MODULE
-        // ===================================
         const Leaderboard = {
             async show() {
                 document.getElementById('leaderboard-modal').classList.remove('hidden');
                 const list = document.getElementById('leaderboard-list');
-                
                 if (window.FirebaseApp) {
                     const data = await window.FirebaseApp.getLeaderboard();
-                    
-                    if (data.length === 0) {
-                        list.innerHTML = '<div class="text-center text-slate-400 mt-10">ยังไม่มีข้อมูลคะแนน</div>';
-                        return;
-                    }
-
+                    if (data.length === 0) { list.innerHTML = '<div class="text-center text-slate-400 mt-10">ยังไม่มีข้อมูลคะแนน</div>'; return; }
                     list.innerHTML = data.map((user, index) => {
                         let rankClass = "bg-slate-100 text-slate-500";
                         if (index === 0) rankClass = "bg-yellow-100 text-yellow-700 font-bold border-yellow-200 border";
                         if (index === 1) rankClass = "bg-slate-200 text-slate-600 font-bold border-slate-300 border";
                         if (index === 2) rankClass = "bg-orange-100 text-orange-700 font-bold border-orange-200 border";
-
-                        let badge = "Intern";
-                        if (user.level >= 3) badge = "Resident";
-                        if (user.level >= 6) badge = "Specialist";
-
-                        return `
-                        <div class="flex items-center gap-3 bg-white p-3 rounded-xl mb-2 border border-slate-100 shadow-sm">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${rankClass}">
-                                ${index + 1}
-                            </div>
-                            <div class="flex-1">
-                                <div class="font-bold text-slate-700 text-sm">${user.name || 'Anonymous'}</div>
-                                <div class="text-[10px] text-slate-400 uppercase font-bold">${badge} • ${user.totalCasesSolved || 0} Wins</div>
-                            </div>
-                            <div class="flex flex-col items-end">
-                                <span class="text-[9px] text-slate-400 font-bold uppercase">Level</span>
-                                <span class="font-heading font-bold text-teal-600 text-xl leading-none">${user.level}</span>
-                            </div>
-                        </div>
-                        `;
+                        let badge = "Intern"; if (user.level >= 3) badge = "Resident"; if (user.level >= 6) badge = "Specialist";
+                        return `<div class="flex items-center gap-3 bg-white p-3 rounded-xl mb-2 border border-slate-100 shadow-sm"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${rankClass}">${index + 1}</div><div class="flex-1"><div class="font-bold text-slate-700 text-sm">${user.name || 'Anonymous'}</div><div class="text-[10px] text-slate-400 uppercase font-bold">${badge} • ${user.totalCasesSolved || 0} Wins</div></div><div class="flex flex-col items-end"><span class="text-[9px] text-slate-400 font-bold uppercase">Level</span><span class="font-heading font-bold text-teal-600 text-xl leading-none">${user.level}</span></div></div>`;
                     }).join('');
-                } else {
-                    list.innerHTML = '<div class="text-center text-slate-400 mt-10">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้</div>';
-                }
+                } else { list.innerHTML = '<div class="text-center text-slate-400 mt-10">โหมดออฟไลน์</div>'; }
             },
-
-            hide() {
-                document.getElementById('leaderboard-modal').classList.add('hidden');
-            }
+            hide() { document.getElementById('leaderboard-modal').classList.add('hidden'); }
         };
 
-        // ===================================
-        // TUTORIAL MODULE
-        // ===================================
         const Tutorial = {
-            currentStep: 1,
-            totalSteps: 3,
-
+            currentStep: 1, totalSteps: 3,
             next() {
-                if (this.currentStep < this.totalSteps) {
-                    document.getElementById(`slide-${this.currentStep}`).classList.remove('active', 'flex');
-                    document.getElementById(`slide-${this.currentStep}`).classList.add('hidden');
-                    document.getElementById(`dot-${this.currentStep}`).classList.remove('active', 'bg-teal-600', 'w-6');
-                    
-                    this.currentStep++;
+                document.getElementById(`slide-${this.currentStep}`).classList.remove('active', 'flex');
+                document.getElementById(`slide-${this.currentStep}`).classList.add('hidden');
+                document.getElementById(`dot-${this.currentStep}`).classList.remove('active', 'bg-teal-600', 'w-6');
+                this.currentStep++;
+                if (this.currentStep <= this.totalSteps) {
                     document.getElementById(`slide-${this.currentStep}`).classList.remove('hidden');
                     document.getElementById(`slide-${this.currentStep}`).classList.add('active', 'flex');
                     document.getElementById(`dot-${this.currentStep}`).classList.add('active', 'bg-teal-600', 'w-6');
-
-                    if (this.currentStep === this.totalSteps) {
-                        document.getElementById('btn-next').classList.add('hidden');
-                        document.getElementById('btn-start').classList.remove('hidden');
-                    }
-                    
-                    lucide.createIcons();
+                    if (this.currentStep === this.totalSteps) { document.getElementById('btn-next').classList.add('hidden'); document.getElementById('btn-start').classList.remove('hidden'); }
                 }
             },
-
-            finish() {
-                document.getElementById('tutorial-modal').classList.add('hidden');
-                GameController.loadNewCase();
-            }
+            finish() { document.getElementById('tutorial-modal').classList.add('hidden'); GameController.loadNewCase(); }
         };
 
-        // ===================================
-        // GAME CONTROLLER MODULE
-        // ===================================
         const GameController = {
             loadNewCase() {
                 TimerController.stop();
-                
                 const currentLevel = AppState.currentLevel;
                 let timeLimit = CONFIG.BASE_TIME;
+                if (currentLevel > 1) timeLimit = Math.max(60, CONFIG.BASE_TIME - ((currentLevel - 1) * 5));
                 
-                if (currentLevel > 1) {
-                    timeLimit = Math.max(60, CONFIG.BASE_TIME - ((currentLevel - 1) * 5));
-                }
-
                 const newCase = CaseGenerator.generate(currentLevel);
                 AppState.setCurrentCase(newCase);
                 
@@ -1160,19 +906,21 @@
                 
                 ChatSystem.setupSuggestions();
                 document.getElementById('chat-container').innerHTML = '';
+                ChatSystem.chatHistory = [];
+                ChatSystem.updateAIStatus(true); // Assume active initially
                 
-                // Add the initial message from the specific owner role
-                ChatSystem.addMessage('ai', `สวัสดีครับ ผมเป็น${newCase.owner.plea.includes('ผม') ? 'เจ้าของ' : 'เจ้าของ'}ของ ${newCase.name} ครับ`);
+                // AI Roleplay Intro
+                const introMsg = `สวัสดีครับ ผมเป็น${newCase.owner.plea.includes('ผม') ? 'เจ้าของ' : 'เจ้าของ'}ของ ${newCase.name} ครับ`;
+                ChatSystem.addMessage('ai', introMsg);
+                ChatSystem.chatHistory.push({ role: "model", parts: [{ text: introMsg }] });
                 
                 this.showIntro(newCase, timeLimit);
                 Navigation.showSection('history');
                 
-                const m = Math.floor(timeLimit / 60);
-                const s = timeLimit % 60;
+                const m = Math.floor(timeLimit / 60); const s = timeLimit % 60;
                 document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0'+s : s}`;
                 this.currentTimeLimit = timeLimit;
             },
-
             updateUI(caseData) {
                 document.getElementById('info-name').innerText = caseData.name;
                 document.getElementById('info-signalment').innerText = caseData.info.signalment;
@@ -1181,33 +929,18 @@
                 document.getElementById('badge-weight').innerText = caseData.info.weight + ' kg';
                 document.getElementById('history-underlying').innerText = caseData.history.underlying;
                 document.getElementById('history-meds').innerText = caseData.history.meds;
-                
                 document.getElementById('history-img').src = caseData.img;
-                
-                // Intro Modal specific updates
                 document.getElementById('intro-img-mini').src = caseData.img;
-                // Updated: Just showing dog name, removed role text logic for UI
                 document.getElementById('intro-patient-name').innerText = caseData.name;
                 document.getElementById('intro-narrative').innerText = caseData.scenario;
                 document.getElementById('difficulty-text').innerText = `Level ${AppState.currentLevel}`;
             },
-
             setupOptions(caseData) {
-                const diagSelect = document.getElementById('final-diag');
-                const treatSelect = document.getElementById('final-treat');
-                
-                diagSelect.innerHTML = '<option value="">-- เลือกโรค --</option>';
-                treatSelect.innerHTML = '<option value="">-- เลือกการรักษา --</option>';
-                
-                caseData.correct.options.d.forEach(option => {
-                    diagSelect.innerHTML += `<option value="${option}">${option}</option>`;
-                });
-                
-                caseData.correct.options.t.forEach(option => {
-                    treatSelect.innerHTML += `<option value="${option}">${option}</option>`;
-                });
+                const d = document.getElementById('final-diag'); const t = document.getElementById('final-treat');
+                d.innerHTML = '<option value="">-- เลือกโรค --</option>'; t.innerHTML = '<option value="">-- เลือกการรักษา --</option>';
+                caseData.correct.options.d.forEach(o => d.innerHTML += `<option value="${o}">${o}</option>`);
+                caseData.correct.options.t.forEach(o => t.innerHTML += `<option value="${o}">${o}</option>`);
             },
-
             clearResults() {
                 document.getElementById('physical-results').innerHTML = '';
                 document.getElementById('lab-results').innerHTML = '<div class="text-center py-10 text-slate-400 text-sm"><i data-lucide="test-tube-2" class="w-10 h-10 mx-auto mb-2 opacity-50"></i> ยังไม่ได้ส่งตรวจ</div>';
@@ -1215,37 +948,22 @@
                 document.getElementById('progress-note').value = '';
                 lucide.createIcons();
             },
-
             showIntro(caseData, timeLimit) {
-                const m = Math.floor(timeLimit / 60);
-                const s = timeLimit % 60;
+                const m = Math.floor(timeLimit / 60); const s = timeLimit % 60;
                 document.getElementById('start-time-text').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                
                 document.getElementById('score-modal').classList.add('hidden');
                 document.getElementById('timeout-modal').classList.add('hidden');
                 document.getElementById('intro-modal').classList.remove('hidden');
                 lucide.createIcons();
             },
-
             startCase() {
                 document.getElementById('intro-modal').classList.add('hidden');
                 TimerController.start(this.currentTimeLimit);
             },
-
-            nextCase() {
-                this.loadNewCase();
-            }
+            nextCase() { this.loadNewCase(); }
         };
 
-        // ===================================
-        // APPLICATION INITIALIZATION
-        // ===================================
-        window.addEventListener('load', () => {
-            lucide.createIcons();
-            AppState.updateLevelUI();
-        });
+        window.addEventListener('load', () => { lucide.createIcons(); AppState.updateLevelUI(); });
     </script>
 </body>
 </html>
-
-
