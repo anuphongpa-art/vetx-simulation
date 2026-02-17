@@ -606,14 +606,14 @@
         const ChatSystem = {
             chatHistory: [],
             
-            // List of models to try in order (Flash first for speed, Pro for quality, v1beta for newest features)
-            models: [
-                { name: 'gemini-1.5-flash', version: 'v1beta' },
-                { name: 'gemini-1.5-flash', version: 'v1' },
-                { name: 'gemini-1.5-pro', version: 'v1beta' },
-                { name: 'gemini-1.0-pro', version: 'v1beta' },
-                { name: 'gemini-pro', version: 'v1' }
-            ],
+            // Updated models - Gemini 2.0/1.5 latest
+        models: [
+                { name: 'gemini-2.0-flash', version: 'v1beta' },
+                { name: 'gemini-2.0-flash-lite', version: 'v1beta' },
+                { name: 'gemini-1.5-flash-latest', version: 'v1beta' },
+                { name: 'gemini-1.5-flash-8b', version: 'v1beta' },
+                { name: 'gemini-1.5-pro-latest', version: 'v1beta' },
+        ],
             
             toggle() {
                 const modal = document.getElementById('chat-modal');
@@ -1008,3 +1008,4 @@
     </script>
 </body>
 </html>
+
