@@ -702,7 +702,7 @@
                 this.chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
                 // Call Gemini API (Stable v1.5 Flash)
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`;
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -1004,6 +1004,7 @@
     </script>
 </body>
 </html>
+
 
 
 
