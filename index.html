@@ -12,7 +12,7 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VETx | Vet Clinical Simulation</title>
+    <title>VETx | AI Medical Simulation</title>
     
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -108,7 +108,7 @@
                 <div id="ai-status-dot" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white" title="AI Status"></div>
             </div>
             <h1 class="font-heading font-bold text-lg text-slate-800 tracking-tight">
-                VET<span class="text-teal-600">x</span> <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 ml-1 bg-slate-50">Stable</span>
+                VET<span class="text-teal-600">x</span> <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 ml-1 bg-slate-50">AI-Auto</span>
             </h1>
         </div>
         <div class="flex items-center gap-2">
@@ -414,7 +414,7 @@
     <!-- LOGIC -->
     <script>
         // *** IMPORTANT: ใส่ API KEY ตรงนี้ (⭐⭐⭐⭐⭐) ***
-        const apiKey = "AIzaSyBXI1fj46SArAVL5CZwsyjeppQycmiRUJQ"; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด เช่น "AIzaS..."
+        const apiKey = "AIzaSyBXI1fj46SArAVL5CZwsyjeppQycmiRUJQ"; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด
 
         const CONFIG = { BASE_TIME: 90 };
 
@@ -602,9 +602,17 @@
             }
         };
 
-        // AI CHAT SYSTEM
+        // AI CHAT SYSTEM - Universal Model Switcher
         const ChatSystem = {
             chatHistory: [],
+            
+            // List of models to try in order
+            models: [
+                'gemini-1.5-flash',
+                'gemini-2.0-flash-exp',
+                'gemini-1.5-pro',
+                'gemini-1.0-pro'
+            ],
             
             toggle() {
                 const modal = document.getElementById('chat-modal');
@@ -632,104 +640,89 @@
                 this.showTyping();
 
                 try {
-                    // Check if API Key is present
                     if (!apiKey || apiKey === "") {
                         throw new Error("Missing API Key");
                     }
                     
-                    // AI Attempt
-                    const response = await this.getAIResponse(text);
+                    // Try to get response from models
+                    const response = await this.tryModels(text);
                     this.hideTyping();
                     this.addMessage('ai', response);
                     this.updateAIStatus(true);
                 } catch (e) {
-                    // Fallback
                     this.hideTyping();
                     
-                    // Specific error handling for user feedback
                     if (e.message === "Missing API Key") {
-                        this.addMessage('system', "⚠️ ระบบขัดข้อง: กรุณาใส่ API Key ในโค้ดบรรทัดที่ 492");
+                        this.addMessage('system', "⚠️ ระบบขัดข้อง: กรุณาใส่ API Key ในโค้ดบรรทัดที่ 502");
                         this.updateAIStatus(false);
                         return;
                     }
                     
-                    console.error("AI Error:", e);
-                    
-                    // If error is permission denied, show specific message
                     if (e.message === "API_KEY_RESTRICTED") {
-                        this.addMessage('system', "⚠️ API Key ถูกจำกัดสิทธิ์ (Website Restriction) ทำให้ไม่สามารถใช้งานในหน้าพรีวิวนี้ได้\n\nวิธีแก้: กรุณาไปที่ Google Cloud Console > Credentials และปิด 'Website restrictions' ชั่วคราว หรือเพิ่มโดเมนของหน้านี้ลงไป");
+                        this.addMessage('system', "⚠️ API Key ถูกจำกัดสิทธิ์ (Error 403): กรุณาเพิ่มลิงก์เว็บนี้ใน Google Cloud Console > Credentials > Website restrictions");
                         this.updateAIStatus(false);
                         return;
                     }
-
+                    
+                    console.error("All AI models failed:", e);
                     const fallbackResponse = this.getFallbackResponse(text, answer);
                     this.addMessage('ai', fallbackResponse);
                     this.updateAIStatus(false);
                 }
             },
 
-            async getAIResponse(userMessage) {
+            async tryModels(userMessage) {
                 const caseData = AppState.currentCase;
-                // System Prompt for Roleplay
                 const systemPrompt = `
-                    Roleplay Instructions:
-                    You are portraying the owner of a pet in a veterinary simulation.
-                    
-                    Pet Details:
-                    - Name: ${caseData.name}
-                    - Signalment: ${caseData.info.signalment}
-                    
-                    Your Persona:
-                    - Tone: ${caseData.owner.tone} (${caseData.owner.plea})
-                    - Knowledge: You are a layperson. You do NOT know medical terms. You describe things simply.
-                    
-                    The Situation:
-                    - Chief Complaint: ${caseData.cc}
-                    - Context: ${caseData.scenario}
-                    
-                    Current Interaction:
-                    The veterinarian (user) asks: "${userMessage}"
-                    
-                    Response Guidelines:
-                    - Answer in Thai language only.
-                    - Keep it short (1-2 sentences).
-                    - Stay in character. Be emotional if the tone suggests it.
-                    - If asked about history/symptoms, reveal clues from: ${caseData.history.underlying}, ${caseData.history.meds}.
-                    - Do NOT reveal the final diagnosis (${caseData.correct.diag}).
-                    - CRITICAL: Output ONLY the spoken dialogue. Do NOT include "Note to self", "Self-Correction", "Analysis", or any internal thought process.
+                    Roleplay as pet owner. Pet: ${caseData.name}, ${caseData.info.signalment}. 
+                    Tone: ${caseData.owner.tone}. Chief Complaint: ${caseData.cc}.
+                    User asks: "${userMessage}".
+                    Reply in Thai only. Short (1-2 sentences). Emotional. 
+                    History clues: ${caseData.history.underlying}, ${caseData.history.meds}.
+                    NEVER reveal diagnosis: ${caseData.correct.diag}.
+                    Output ONLY dialogue.
                 `;
 
                 this.chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
-                // Call Gemini API (Stable v1.5 Flash)
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [
-                            { role: "user", parts: [{ text: systemPrompt }] },
-                            ...this.chatHistory
-                        ]
-                    })
-                });
+                let lastError = null;
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error("API Error Response:", JSON.stringify(errorData));
-                    
-                    if (errorData.error?.status === 'PERMISSION_DENIED' && errorData.error?.details?.[0]?.reason === 'API_KEY_HTTP_REFERRER_BLOCKED') {
-                        throw new Error('API_KEY_RESTRICTED');
+                // Loop through models until one works
+                for (const model of this.models) {
+                    try {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [
+                                    { role: "user", parts: [{ text: systemPrompt }] },
+                                    ...this.chatHistory
+                                ]
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errData = await response.json().catch(() => ({}));
+                            // Check for 403 specifically
+                            if (response.status === 403) throw new Error('API_KEY_RESTRICTED');
+                            if (response.status === 404) throw new Error('MODEL_NOT_FOUND');
+                            throw new Error(`API Error ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        const aiText = data.candidates[0].content.parts[0].text;
+                        this.chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                        return aiText; // Success!
+
+                    } catch (e) {
+                        lastError = e;
+                        if (e.message === 'API_KEY_RESTRICTED') throw e; // Stop trying if key is restricted
+                        console.log(`Model ${model} failed, trying next...`);
                     }
-                    
-                    throw new Error('API Failed');
                 }
-
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                this.chatHistory.push({ role: "model", parts: [{ text: aiText }] });
-                return aiText;
+                
+                throw lastError; // All models failed
             },
 
             getFallbackResponse(message, providedAnswer) {
@@ -737,7 +730,6 @@
                 const lowerMessage = message.toLowerCase();
                 const currentCase = AppState.currentCase;
                 
-                // 1. Try exact keyword match first
                 const match = currentCase.chat.qa_pairs.find(pair => 
                     lowerMessage.includes(pair.question.toLowerCase()) || 
                     pair.question.toLowerCase().includes(lowerMessage)
@@ -745,36 +737,18 @@
                 
                 if (match) return match.answer;
                 
-                // 2. Mock AI (Random generic responses based on sentiment)
-                const confusedResponses = [
+                const generics = [
                     "เอ่อ... หมอถามว่าอะไรนะครับ/คะ?",
                     "ไม่แน่ใจเหมือนกันครับหมอ",
-                    "อันนี้ไม่รู้ครับ ต้องสังเกตยังไงเหรอครับ?",
-                    "หมอช่วยอธิบายเพิ่มอีกนิดได้ไหมครับ?"
-                ];
-                
-                const worriedResponses = [
-                    "น้องจะเป็นอะไรมากไหมคะหมอ?",
-                    "หมอช่วยน้องด้วยนะคะ",
                     "อาการดูไม่ดีขึ้นเลยค่ะ",
                     "กลัวน้องจะเป็นอะไรไปค่ะหมอ"
                 ];
-
-                const generalResponses = [
-                    "ครับหมอ",
-                    "ค่ะ ตามนั้นเลยค่ะ",
-                    "เพิ่งเป็นเมื่อกี้นี้เองครับ",
-                    "ปกติแข็งแรงดีนะครับ ไม่เคยเป็นแบบนี้มาก่อน"
-                ];
-
-                // Simple keyword detection for context
+                
                 if (lowerMessage.includes("ไหม") || lowerMessage.includes("หรือเปล่า")) {
                      return Math.random() > 0.5 ? "ไม่แน่ใจครับหมอ" : "น่าจะใช่นะครับ";
                 }
                 
-                // Return a random generic response if no keyword matched
-                const allResponses = [...confusedResponses, ...worriedResponses, ...generalResponses];
-                return allResponses[Math.floor(Math.random() * allResponses.length)];
+                return generics[Math.floor(Math.random() * generics.length)];
             },
 
             addMessage(role, text) {
@@ -1004,7 +978,3 @@
     </script>
 </body>
 </html>
-
-
-
-
