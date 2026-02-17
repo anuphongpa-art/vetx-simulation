@@ -606,11 +606,10 @@
         const ChatSystem = {
             chatHistory: [],
             
-            // List of models to try in order
+            // List of models to try in order (Flash first for speed, Pro for quality, v1beta for newest features)
             models: [
                 { name: 'gemini-1.5-flash', version: 'v1beta' },
                 { name: 'gemini-1.5-flash', version: 'v1' },
-                { name: 'gemini-2.0-flash-exp', version: 'v1beta' },
                 { name: 'gemini-1.5-pro', version: 'v1beta' },
                 { name: 'gemini-1.0-pro', version: 'v1beta' },
                 { name: 'gemini-pro', version: 'v1' }
@@ -1009,4 +1008,3 @@
     </script>
 </body>
 </html>
-
