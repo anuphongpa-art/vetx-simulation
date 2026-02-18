@@ -108,7 +108,7 @@
                 <div id="ai-status-dot" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white" title="AI Status"></div>
             </div>
             <h1 class="font-heading font-bold text-lg text-slate-800 tracking-tight">
-                VET<span class="text-teal-600">x</span> <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 ml-1 bg-slate-50">AI-Auto</span>
+                VET<span class="text-teal-600">x</span> <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 ml-1 bg-slate-50">AI-Diag</span>
             </h1>
         </div>
         <div class="flex items-center gap-2">
@@ -362,7 +362,6 @@
             </div>
             <div class="p-6">
                 <div class="bg-gradient-to-br from-orange-50 to-white p-5 rounded-2xl border border-orange-100 shadow-sm mb-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-16 h-16 bg-orange-100 rounded-full -mr-8 -mt-8 opacity-50"></div>
                     <div class="relative z-10">
                         <div class="flex items-center gap-2 mb-3">
                             <i data-lucide="quote" class="w-5 h-5 text-orange-400 fill-current"></i>
@@ -414,7 +413,7 @@
     <!-- LOGIC -->
     <script>
         // *** IMPORTANT: ใส่ API KEY ตรงนี้ (⭐⭐⭐⭐⭐) ***
-        const apiKey = "AIzaSyArDYqFle4yNzaYBPbiL5oJx6nwcVnqU2I"; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด
+        const apiKey = "AIzaSyB3hryHZHeDjZ_8DBQVhPg-L1nadWos6g4"; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด
 
         const CONFIG = { BASE_TIME: 90 };
 
@@ -606,11 +605,14 @@
         const ChatSystem = {
             chatHistory: [],
             
-            // Updated models - Gemini 2.5
-           models: [
-                { name: 'gemini-2.5-flash-preview-05-20', version: 'v1beta' },
-                { name: 'gemini-2.5-flash', version: 'v1beta' },
-                { name: 'gemini-2.0-flash', version: 'v1beta' },
+            // List of models to try in order (Flash first for speed, Pro for quality, v1beta for newest features)
+            models: [
+                { name: 'gemini-1.5-flash', version: 'v1beta' },
+                { name: 'gemini-1.5-flash', version: 'v1' },
+                { name: 'gemini-2.0-flash-exp', version: 'v1beta' },
+                { name: 'gemini-1.5-pro', version: 'v1beta' },
+                { name: 'gemini-1.0-pro', version: 'v1beta' },
+                { name: 'gemini-pro', version: 'v1' }
             ],
             
             toggle() {
@@ -656,7 +658,7 @@
                     this.hideTyping();
                     
                     if (e.message === "Missing API Key") {
-                        this.addMessage('system', "⚠️ ระบบขัดข้อง: กรุณาใส่ API Key ในโค้ดบรรทัดที่ 502");
+                        this.addMessage('system', "⚠️ ระบบขัดข้อง: กรุณาใส่ API Key ในโค้ดบรรทัดที่ 506");
                         this.updateAIStatus(false);
                         return;
                     }
@@ -1006,13 +1008,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
