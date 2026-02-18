@@ -605,14 +605,11 @@
         const ChatSystem = {
             chatHistory: [],
             
-            // List of models to try in order (Flash first for speed, Pro for quality, v1beta for newest features)
-            models: [
-                { name: 'gemini-1.5-flash', version: 'v1beta' },
-                { name: 'gemini-1.5-flash', version: 'v1' },
-                { name: 'gemini-2.0-flash-exp', version: 'v1beta' },
-                { name: 'gemini-1.5-pro', version: 'v1beta' },
-                { name: 'gemini-1.0-pro', version: 'v1beta' },
-                { name: 'gemini-pro', version: 'v1' }
+             // Updated models - Gemini 2.5
+           models: [
+                { name: 'gemini-2.5-flash-preview-05-20', version: 'v1beta' },
+                { name: 'gemini-2.5-flash', version: 'v1beta' },
+                { name: 'gemini-2.0-flash', version: 'v1beta' },
             ],
             
             toggle() {
@@ -1008,3 +1005,4 @@
     </script>
 </body>
 </html>
+
