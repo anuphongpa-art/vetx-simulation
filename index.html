@@ -333,7 +333,7 @@
                 <div id="slide-2" class="tutorial-slide hidden flex-col items-center">
                     <div class="w-28 h-28 bg-purple-50 rounded-full flex items-center justify-center mb-8 text-purple-600 shadow-inner"><i data-lucide="message-circle" class="w-14 h-14"></i></div>
                     <h2 class="text-2xl font-bold font-heading text-slate-800 mb-3">2. ซักประวัติ (AI)</h2>
-                    <p class="text-slate-500 text-sm leading-relaxed px-4">ระบบ Chat แบบใหม่ ขับเคลื่อนด้วย AI พิมพ์ถามได้อิสระเหมือนคุยกับคนจริง!</p>
+                    <p class="text-slate-500 text-sm leading-relaxed px-4">ระบบ AI Chatbot พิมพ์ถามได้อิสระเหมือนคุยกับเจ้าของสัตว์!</p>
                 </div>
                 <div id="slide-3" class="tutorial-slide hidden flex-col items-center">
                     <div class="w-28 h-28 bg-yellow-50 rounded-full flex items-center justify-center mb-8 text-yellow-600 shadow-inner"><i data-lucide="trending-up" class="w-14 h-14"></i></div>
@@ -427,15 +427,15 @@
                 { name: 'Pug', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=300&q=80' },
                 { name: 'Siberian Husky', img: 'https://images.unsplash.com/photo-1560525821-d5615ef80c69?auto=format&fit=crop&w=300&q=80' },
                 { name: 'French Bulldog', img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=300&q=80' },
-                { name: 'Chihuahua', img: 'https://images.unsplash.com/photo-1565553642973-6af7d2a98050?auto=format&fit=crop&w=300&q=80' },
-                { name: 'Shih Tzu', img: 'https://images.unsplash.com/photo-1554830072-52d78d0d4c18?auto=format&fit=crop&w=300&q=80' }
+                { name: 'Chihuahua', img: 'https://images.unsplash.com/photo-1607386176712-d8baeb6178a7?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+                { name: 'Shih Tzu', img: 'https://images.unsplash.com/photo-1695457601176-b779cf426428?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
             ],
             diseases: [
                 { id: 'parvo', name: 'Parvovirus', scenario: "อาเจียนเป็นเลือด ถ่ายเหลวเหม็นคาวรุนแรง ซึมมาก ไม่กินอาหาร", symptoms: { ga: 'Severe dehydration (8%), Lethargic', vitals: 'High Fever (T 40.5), HR 160', abdomen: 'Fluid filled loops', heart_lung: 'Normal' }, lab: { cbc: 'Severe Leukopenia (WBC 2,000)', chem: 'Hypoglycemia', ua: '-' }, imaging: { xray: 'Gas filled intestinal loops', ultra: 'Thickened intestinal wall' }, chat: { questions: ['ถ่ายเป็นยังไง?', 'อาเจียนบ่อยไหม?'], answers: ['ถ่ายเป็นเลือดสด เหม็นมากครับ', 'อาเจียนเกือบตลอดเวลา'] }, correct: { diag: 'Parvovirus', treat: 'Supportive Care (Fluids/Antibiotics)' } },
-                { id: 'fb', name: 'Gastric Foreign Body', scenario: "อาเจียนทุกครั้งหลังกินอาหาร ซึม ชอบรื้อขยะ", symptoms: { ga: 'Alert but painful', vitals: 'T 38.5, HR 120', abdomen: 'Painful cranial abdomen', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Mild Hypokalemia', ua: '-' }, imaging: { xray: 'Radiopaque object in stomach', ultra: 'Acoustic shadowing in stomach' }, chat: { questions: ['ไปกินอะไรผิดสำแดงมา?', 'อ้วกหลังกินข้าวนานไหม?'], answers: ['เห็นคาบลูกบอล/กระดูก/ไม้', 'อ้วกแทบจะทันทีหลังกิน'] }, correct: { diag: 'Gastric Foreign Body', treat: 'Surgery (Gastrotomy)' } },
+                { id: 'fb', name: 'Gastric Foreign Body', scenario: "อาเจียนทุกครั้งหลังกินอาหาร ซึม ถ่ายอุจจาระน้อยลง", symptoms: { ga: 'Alert but painful', vitals: 'T 38.5, HR 120', abdomen: 'Painful cranial abdomen', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Mild Hypokalemia', ua: '-' }, imaging: { xray: 'Radiopaque object in stomach', ultra: 'Acoustic shadowing in stomach' }, chat: { questions: ['ไปกินอะไรผิดสำแดงมา?', 'อ้วกหลังกินข้าวนานไหม?'], answers: ['ไม่รู้เลย แต่เห็นชอบเอาผ้าไปเล่นผ้า', 'อ้วกแทบจะทันทีหลังกิน'] }, correct: { diag: 'Gastric Foreign Body', treat: 'Surgery (Gastrotomy)' } },
                 { id: 'pyo', name: 'Pyometra (Closed)', fixedSex: 'Female', scenario: "ซึม กินน้ำเยอะ ฉี่เยอะ ท้องกาง มีไข้", symptoms: { ga: 'Depressed, Dehydrated', vitals: 'T 39.5, HR 140', abdomen: 'Distended, Painful', heart_lung: 'Normal' }, lab: { cbc: 'High WBC (Neutrophilia)', chem: 'High BUN/Creatinine (Azotemia)', ua: '-' }, imaging: { xray: 'Tubular soft tissue density in abdomen', ultra: 'Fluid filled uterus (Hypoechoic)' }, chat: { questions: ['ทำหมันหรือยัง?', 'กินน้ำเยอะผิดปกติไหม?'], answers: ['ยังไม่ทำครับ', 'กินน้ำเยอะมาก ฉี่บ่อย'] }, correct: { diag: 'Pyometra', treat: 'Surgery (OHE) + Fluids' } },
                 { id: 'stone', name: 'Cystic Calculi', scenario: "ฉี่กะปริดกะปรอย ฉี่มีเลือดปน ร้องเจ็บเวลาฉี่", symptoms: { ga: 'Normal', vitals: 'Normal', abdomen: 'Palpable hard mass in bladder', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Normal', ua: 'Hematuria, Crystals found' }, imaging: { xray: 'Radiopaque stones in bladder', ultra: 'Hyperechoic stones with shadowing' }, chat: { questions: ['ฉี่ลำบากไหม?', 'ฉี่มีเลือดปนไหม?'], answers: ['เบ่งนานมากครับกว่าจะออก', 'มีเลือดหยดๆ ปนออกมา'] }, correct: { diag: 'Cystic Calculi', treat: 'Surgery (Cystotomy)' } },
-                { id: 'heartworm', name: 'Heartworm Disease', scenario: "ไอแห้งๆ เหนื่อยง่าย ท้องมาร (Ascites) น้ำหนักลด", symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' }, lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' }, imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' }, chat: { questions: ['ป้องกันพยาธิหัวใจไหม?', 'ไอตอนไหนเป็นพิเศษ?'], answers: ['ไม่เคยป้องกันเลยครับ', 'ไอแห้งๆ ตลอดเวลา'] }, correct: { diag: 'Heartworm Disease', treat: 'Adulticide Treatment' } }
+                { id: 'heartworm', name: 'Heartworm Disease', scenario: "ไอแห้งๆ เหนื่อยง่าย ท้องมาร น้ำหนักลด", symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' }, lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' }, imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' }, chat: { questions: ['ป้องกันพยาธิหัวใจไหม?', 'ไอตอนไหนเป็นพิเศษ?'], answers: ['ไม่เคยป้องกันเลยครับ', 'ไอแห้งๆ ตลอดเวลา'] }, correct: { diag: 'Heartworm Disease', treat: 'Adulticide Treatment' } }
             ],
             diagnosisList: ['Parvovirus', 'Gastric Foreign Body', 'Pyometra', 'Cystic Calculi', 'Heartworm Disease', 'E. canis (Blood Parasite)', 'Demodicosis', 'Chocolate Toxicity', 'Gastric Dilatation-Volvulus (GDV)', 'Pancreatitis', 'Chronic Kidney Disease', 'Diabetes Mellitus', 'Hypothyroidism', 'Kennel Cough', 'Mast Cell Tumor', 'Patellar Luxation', 'Hip Dysplasia', 'Heat Stroke', 'Leptospirosis', 'Cherry Eye'],
             treatmentList: ['Supportive Care (Fluids/Antibiotics)', 'Surgery (Gastrotomy)', 'Surgery (OHE) + Fluids', 'Surgery (Cystotomy)', 'Adulticide Treatment', 'Doxycycline', 'Isoxazoline (Nexgard/Bravecto)', 'Induce Vomiting + Activated Charcoal', 'Emergency Surgery (Gastropexy)', 'Fluid Therapy + Pain Management', 'Fluid Therapy + Kidney Diet', 'Insulin Therapy', 'Levothyroxine', 'Cough Suppressants + Doxycycline', 'Surgery + Histopathology', 'Surgery (Sulcoplasty)', 'Weight Control + NSAIDs', 'Active Cooling + Oxygen', 'Antibiotics (Penicillin/Doxy) + Dialysis', 'Surgery (Pocket Technique)']
@@ -655,13 +655,13 @@
                     this.hideTyping();
                     
                     if (e.message === "Missing API Key") {
-                        this.addMessage('system', "⚠️ ระบบขัดข้อง: กรุณาใส่ API Key ในโค้ดบรรทัดที่ 506");
+                        this.addMessage('system', "⚠️ ระบบขัดข้อง");
                         this.updateAIStatus(false);
                         return;
                     }
                     
                     if (e.message === "API_KEY_RESTRICTED") {
-                        this.addMessage('system', "⚠️ API Key ถูกจำกัดสิทธิ์ (Error 403): กรุณาเพิ่มลิงก์เว็บนี้ใน Google Cloud Console > Credentials > Website restrictions");
+                        this.addMessage('system', "⚠️ ระบบขัดข้อง");
                         this.updateAIStatus(false);
                         return;
                     }
@@ -765,10 +765,9 @@
                 if (match) return match.answer;
                 
                 const generics = [
-                    "เอ่อ... หมอถามว่าอะไรนะครับ/คะ?",
-                    "ไม่แน่ใจเหมือนกันครับหมอ",
-                    "อาการดูไม่ดีขึ้นเลยค่ะ",
-                    "กลัวน้องจะเป็นอะไรไปค่ะหมอ"
+                    "ไม่แน่ใจเลยอ่ะหมอ",
+                    "รีบช่วยน้องก่อนหมอ",
+                    "ไม่รู้อะไรเลย ช่วยน้องด้วยหมอ"
                 ];
                 
                 if (lowerMessage.includes("ไหม") || lowerMessage.includes("หรือเปล่า")) {
@@ -1005,5 +1004,6 @@
     </script>
 </body>
 </html>
+
 
 
