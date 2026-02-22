@@ -412,8 +412,8 @@
 
     <!-- LOGIC -->
     <script>
-        // *** IMPORTANT: ใส่ API KEY ตรงนี้ (⭐⭐⭐⭐⭐) ***
-        const apiKey = ""; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด
+        // ✅ แก้ไข 1: ไม่มี API Key ในโค้ดแล้ว ใช้ Cloudflare Worker แทน
+        const WORKER_URL = "https://vetx.anuphong-pa.workers.dev/";
 
         const CONFIG = { BASE_TIME: 90 };
 
@@ -601,17 +601,10 @@
             }
         };
 
-        // AI CHAT SYSTEM - Universal Model Switcher
+        // ✅ แก้ไข 2: AI CHAT SYSTEM - ใช้ Cloudflare Worker แทน API Key โดยตรง
         const ChatSystem = {
             chatHistory: [],
-            
-             // Updated models - Gemini 2.5
-           models: [
-                { name: 'gemini-2.5-flash-preview-05-20', version: 'v1beta' },
-                { name: 'gemini-2.5-flash', version: 'v1beta' },
-                { name: 'gemini-2.0-flash', version: 'v1beta' },
-            ],
-            
+
             toggle() {
                 const modal = document.getElementById('chat-modal');
                 const overlay = document.getElementById('chat-overlay');
@@ -628,7 +621,7 @@
                 }
             },
 
-            async send(question = null, answer = null) {
+            async send(question = null) {
                 const input = document.getElementById('chat-input');
                 const text = question || input.value.trim();
                 if (!text) return;
@@ -638,42 +631,23 @@
                 this.showTyping();
 
                 try {
-                    // Check if API Key is present
-                    let currentKey = apiKey;
-                    if (!currentKey || currentKey.trim() === "") {
-                        throw new Error("Missing API Key");
-                    }
-                    currentKey = currentKey.trim();
-                    
-                    // AI Attempt
-                    const response = await this.tryModels(text, currentKey);
+                    // ✅ เรียก Worker โดยตรง ไม่ต้องเช็ค API Key
+                    const response = await this.callWorker(text);
                     this.hideTyping();
                     this.addMessage('ai', response);
                     this.updateAIStatus(true);
                 } catch (e) {
-                    // Fallback
                     this.hideTyping();
-                    
-                    if (e.message === "Missing API Key") {
-                        this.addMessage('system', "⚠️ ระบบขัดข้อง");
-                        this.updateAIStatus(false);
-                        return;
-                    }
-                    
-                    if (e.message === "API_KEY_RESTRICTED") {
-                        this.addMessage('system', "⚠️ ระบบขัดข้อง");
-                        this.updateAIStatus(false);
-                        return;
-                    }
-                    
-                    console.error("All AI models failed:", e);
-                    const fallbackResponse = this.getFallbackResponse(text, answer);
+                    console.error("Worker call failed:", e);
+                    // Fallback response
+                    const fallbackResponse = this.getFallbackResponse(text);
                     this.addMessage('ai', fallbackResponse);
                     this.updateAIStatus(false);
                 }
             },
 
-            async tryModels(userMessage, currentKey) {
+            // ✅ แก้ไข 3: ฟังก์ชันใหม่ เรียก Worker URL เดียว ไม่มี model loop
+            async callWorker(userMessage) {
                 const caseData = AppState.currentCase;
                 const systemPrompt = `
                     Roleplay as pet owner. Pet: ${caseData.name}, ${caseData.info.signalment}. 
@@ -687,73 +661,28 @@
 
                 this.chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
-                let lastError = null;
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: systemPrompt }] },
+                            ...this.chatHistory
+                        ]
+                    })
+                });
 
-                // Loop through models until one works
-                for (const modelConfig of this.models) {
-                    try {
-                        const url = `https://YOUR-WORKER.workers.dev/`;const url = `https://YOUR-WORKER.workers.dev/`;
-                        console.log(`Trying model: ${modelConfig.name} (${modelConfig.version})`);
-                        
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contents: [
-                                    { role: "user", parts: [{ text: systemPrompt }] },
-                                    ...this.chatHistory
-                                ]
-                            })
-                        });
-
-                        if (!response.ok) {
-                            const errData = await response.json().catch(() => ({}));
-                            // Check for 403 specifically
-                            if (response.status === 403) throw new Error('API_KEY_RESTRICTED');
-                            if (response.status === 404) throw new Error('MODEL_NOT_FOUND');
-                            throw new Error(`API Error ${response.status}`);
-                        }
-
-                        const data = await response.json();
-                        const aiText = data.candidates[0].content.parts[0].text;
-                        this.chatHistory.push({ role: "model", parts: [{ text: aiText }] });
-                        return aiText; // Success!
-
-                    } catch (e) {
-                        lastError = e;
-                        if (e.message === 'API_KEY_RESTRICTED') throw e; // Stop trying if key is restricted
-                        console.log(`Model ${modelConfig.name} failed.`);
-                    }
+                if (!response.ok) {
+                    throw new Error(`Worker error ${response.status}`);
                 }
-                
-                // Debugging help for user
-                console.error("DEBUG: Could not connect to any model. Please check your API Key permissions.");
-                this.listAvailableModels(currentKey); // Try to list what IS available
-                
-                throw lastError; // All models failed
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                this.chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                return aiText;
             },
 
-            async listAvailableModels(key) {
-                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    console.log("--- DEBUG: AVAILABLE MODELS FOR YOUR KEY ---");
-                    if(data.models) {
-                        data.models.forEach(m => {
-                            if(m.supportedGenerationMethods.includes("generateContent")) {
-                                console.log(m.name);
-                            }
-                        });
-                    } else {
-                        console.log("No models found or error listing models.", data);
-                    }
-                    console.log("-------------------------------------------");
-                 } catch(e) { console.log("Could not list models."); }
-            },
-
-            getFallbackResponse(message, providedAnswer) {
-                if (providedAnswer) return providedAnswer;
+            getFallbackResponse(message) {
                 const lowerMessage = message.toLowerCase();
                 const currentCase = AppState.currentCase;
                 
@@ -764,16 +693,10 @@
                 
                 if (match) return match.answer;
                 
-                const generics = [
-                    "ไม่แน่ใจเลยอ่ะหมอ",
-                    "รีบช่วยน้องก่อนหมอ",
-                    "ไม่รู้อะไรเลย ช่วยน้องด้วยหมอ"
-                ];
-                
+                const generics = ["ไม่แน่ใจเลยอ่ะหมอ", "รีบช่วยน้องก่อนหมอ", "ไม่รู้อะไรเลย ช่วยน้องด้วยหมอ"];
                 if (lowerMessage.includes("ไหม") || lowerMessage.includes("หรือเปล่า")) {
-                     return Math.random() > 0.5 ? "ไม่แน่ใจครับหมอ" : "น่าจะใช่นะครับ";
+                    return Math.random() > 0.5 ? "ไม่แน่ใจครับหมอ" : "น่าจะใช่นะครับ";
                 }
-                
                 return generics[Math.floor(Math.random() * generics.length)];
             },
 
@@ -944,10 +867,9 @@
                 ChatSystem.setupSuggestions();
                 document.getElementById('chat-container').innerHTML = '';
                 ChatSystem.chatHistory = [];
-                ChatSystem.updateAIStatus(true); // Assume active initially
+                ChatSystem.updateAIStatus(true);
                 
-                // AI Roleplay Intro
-                const introMsg = `สวัสดีครับ ผมเป็น${newCase.owner.plea.includes('ผม') ? 'เจ้าของ' : 'เจ้าของ'}ของ ${newCase.name} ครับ`;
+                const introMsg = `สวัสดีครับ ผมเป็นเจ้าของของ ${newCase.name} ครับ`;
                 ChatSystem.addMessage('ai', introMsg);
                 ChatSystem.chatHistory.push({ role: "model", parts: [{ text: introMsg }] });
                 
@@ -1004,13 +926,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
