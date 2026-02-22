@@ -413,7 +413,7 @@
     <!-- LOGIC -->
     <script>
         // *** IMPORTANT: ใส่ API KEY ตรงนี้ (⭐⭐⭐⭐⭐) ***
-        const apiKey = "AIzaSyACbfhJpATJX1w_ck2491lOlRpJJ1SW9Ro"; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด
+        const apiKey = ""; // ใส่รหัสจาก Google AI Studio ในเครื่องหมายคำพูด
 
         const CONFIG = { BASE_TIME: 90 };
 
@@ -692,7 +692,7 @@
                 // Loop through models until one works
                 for (const modelConfig of this.models) {
                     try {
-                        const url = `https://generativelanguage.googleapis.com/${modelConfig.version}/models/${modelConfig.name}:generateContent?key=${currentKey}`;
+                        const url = `https://YOUR-WORKER.workers.dev/`;const url = `https://YOUR-WORKER.workers.dev/`;
                         console.log(`Trying model: ${modelConfig.name} (${modelConfig.version})`);
                         
                         const response = await fetch(url, {
@@ -1004,6 +1004,7 @@
     </script>
 </body>
 </html>
+
 
 
 
