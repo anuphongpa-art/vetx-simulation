@@ -64,21 +64,16 @@
     </script>
 
     <style>
-        /* CORE STYLES */
         body { font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
         h1, h2, h3, h4, h5, .font-heading { font-family: 'Kanit', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* COMPONENTS */
         .mobile-card { @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-4; }
         .nav-item-desktop.active { @apply border-r-4 border-teal-600 bg-teal-50 text-teal-700 font-semibold; }
         .nav-item-desktop { @apply border-r-4 border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all; }
         .nav-item-mobile.active { @apply text-teal-600; }
         .nav-item-mobile.active i { @apply fill-current; }
         .nav-item-mobile { @apply text-slate-400 flex flex-col items-center justify-center gap-1 transition-colors; }
-
-        /* ANIMATIONS */
         .chat-modal { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
         .chat-open { transform: translateY(0); }
         .chat-closed { transform: translateY(100%); }
@@ -92,7 +87,6 @@
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        
         .level-badge-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #8a6d0b; border: 1px solid #eec028; }
         .level-badge-silver { background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%); color: #424242; border: 1px solid #9e9e9e; }
         .level-badge-bronze { background: linear-gradient(135deg, #fcead7 0%, #f5d0a9 100%); color: #8d5c2c; border: 1px solid #e6b88a; }
@@ -412,9 +406,7 @@
 
     <!-- LOGIC -->
     <script>
-        // ✅ แก้ไข 1: ไม่มี API Key ในโค้ดแล้ว ใช้ Cloudflare Worker แทน
         const WORKER_URL = "https://vetx.anuphong-pa.workers.dev/";
-
         const CONFIG = { BASE_TIME: 90 };
 
         // DATA
@@ -431,11 +423,24 @@
                 { name: 'Shih Tzu', img: 'https://images.unsplash.com/photo-1695457601176-b779cf426428?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
             ],
             diseases: [
+                // ===== ORIGINAL 5 CASES =====
                 { id: 'parvo', name: 'Parvovirus', scenario: "อาเจียนเป็นเลือด ถ่ายเหลวเหม็นคาวรุนแรง ซึมมาก ไม่กินอาหาร", symptoms: { ga: 'Severe dehydration (8%), Lethargic', vitals: 'High Fever (T 40.5), HR 160', abdomen: 'Fluid filled loops', heart_lung: 'Normal' }, lab: { cbc: 'Severe Leukopenia (WBC 2,000)', chem: 'Hypoglycemia', ua: '-' }, imaging: { xray: 'Gas filled intestinal loops', ultra: 'Thickened intestinal wall' }, chat: { questions: ['ถ่ายเป็นยังไง?', 'อาเจียนบ่อยไหม?'], answers: ['ถ่ายเป็นเลือดสด เหม็นมากครับ', 'อาเจียนเกือบตลอดเวลา'] }, correct: { diag: 'Parvovirus', treat: 'Supportive Care (Fluids/Antibiotics)' } },
                 { id: 'fb', name: 'Gastric Foreign Body', scenario: "อาเจียนทุกครั้งหลังกินอาหาร ซึม ถ่ายอุจจาระน้อยลง", symptoms: { ga: 'Alert but painful', vitals: 'T 38.5, HR 120', abdomen: 'Painful cranial abdomen', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Mild Hypokalemia', ua: '-' }, imaging: { xray: 'Radiopaque object in stomach', ultra: 'Acoustic shadowing in stomach' }, chat: { questions: ['ไปกินอะไรผิดสำแดงมา?', 'อ้วกหลังกินข้าวนานไหม?'], answers: ['ไม่รู้เลย แต่เห็นชอบเอาผ้าไปเล่นผ้า', 'อ้วกแทบจะทันทีหลังกิน'] }, correct: { diag: 'Gastric Foreign Body', treat: 'Surgery (Gastrotomy)' } },
                 { id: 'pyo', name: 'Pyometra (Closed)', fixedSex: 'Female', scenario: "ซึม กินน้ำเยอะ ฉี่เยอะ ท้องกาง มีไข้", symptoms: { ga: 'Depressed, Dehydrated', vitals: 'T 39.5, HR 140', abdomen: 'Distended, Painful', heart_lung: 'Normal' }, lab: { cbc: 'High WBC (Neutrophilia)', chem: 'High BUN/Creatinine (Azotemia)', ua: '-' }, imaging: { xray: 'Tubular soft tissue density in abdomen', ultra: 'Fluid filled uterus (Hypoechoic)' }, chat: { questions: ['ทำหมันหรือยัง?', 'กินน้ำเยอะผิดปกติไหม?'], answers: ['ยังไม่ทำครับ', 'กินน้ำเยอะมาก ฉี่บ่อย'] }, correct: { diag: 'Pyometra', treat: 'Surgery (OHE) + Fluids' } },
                 { id: 'stone', name: 'Cystic Calculi', scenario: "ฉี่กะปริดกะปรอย ฉี่มีเลือดปน ร้องเจ็บเวลาฉี่", symptoms: { ga: 'Normal', vitals: 'Normal', abdomen: 'Palpable hard mass in bladder', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Normal', ua: 'Hematuria, Crystals found' }, imaging: { xray: 'Radiopaque stones in bladder', ultra: 'Hyperechoic stones with shadowing' }, chat: { questions: ['ฉี่ลำบากไหม?', 'ฉี่มีเลือดปนไหม?'], answers: ['เบ่งนานมากครับกว่าจะออก', 'มีเลือดหยดๆ ปนออกมา'] }, correct: { diag: 'Cystic Calculi', treat: 'Surgery (Cystotomy)' } },
-                { id: 'heartworm', name: 'Heartworm Disease', scenario: "ไอแห้งๆ เหนื่อยง่าย ท้องมาร น้ำหนักลด", symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' }, lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' }, imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' }, chat: { questions: ['ป้องกันพยาธิหัวใจไหม?', 'ไอตอนไหนเป็นพิเศษ?'], answers: ['ไม่เคยป้องกันเลยครับ', 'ไอแห้งๆ ตลอดเวลา'] }, correct: { diag: 'Heartworm Disease', treat: 'Adulticide Treatment' } }
+                { id: 'heartworm', name: 'Heartworm Disease', scenario: "ไอแห้งๆ เหนื่อยง่าย ท้องมาร น้ำหนักลด", symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' }, lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' }, imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' }, chat: { questions: ['ป้องกันพยาธิหัวใจไหม?', 'ไอตอนไหนเป็นพิเศษ?'], answers: ['ไม่เคยป้องกันเลยครับ', 'ไอแห้งๆ ตลอดเวลา'] }, correct: { diag: 'Heartworm Disease', treat: 'Adulticide Treatment' } },
+
+                // ===== NEW 10 CASES =====
+                { id: 'pancreatitis', name: 'Pancreatitis', scenario: "ปวดท้องรุนแรง อาเจียนบ่อย ไม่กินอาหาร หลังกินอาหารมันๆ", symptoms: { ga: 'Painful, hunched posture (Prayer position)', vitals: 'T 39.5, HR 130', abdomen: 'Severe cranial abdominal pain', heart_lung: 'Normal' }, lab: { cbc: 'Mild Leukocytosis', chem: 'High Lipase/Amylase, Hyperlipidemia', ua: '-' }, imaging: { xray: 'Ground glass opacity cranial abdomen', ultra: 'Hyperechoic pancreas + peripancreatic fluid' }, chat: { questions: ['กินอาหารอะไรมาก่อนไหม?', 'อาเจียนบ่อยแค่ไหน?'], answers: ['กินหมูทอดเยอะมากเลยครับเมื่อคืน', 'อาเจียนทุก 30 นาทีเลยครับ'] }, correct: { diag: 'Pancreatitis', treat: 'Fluid Therapy + Pain Management' } },
+                { id: 'gdv', name: 'GDV', scenario: "ท้องโตอย่างรวดเร็ว เรอไม่ออก ซึมมาก หายใจลำบาก", symptoms: { ga: 'Severely distressed, Tachycardia', vitals: 'T 38.0 (Shock), HR 180', abdomen: 'Tympanic, grossly distended', heart_lung: 'Rapid shallow breathing' }, lab: { cbc: 'Stress leukogram', chem: 'Elevated Lactate, Electrolyte imbalance', ua: '-' }, imaging: { xray: 'Double bubble sign (Compartmentalized gas)', ultra: 'Gastric torsion, reduced wall motility' }, chat: { questions: ['ออกกำลังหลังกินข้าวเลยไหม?', 'ท้องโตเร็วแค่ไหน?'], answers: ['วิ่งเล่นทันทีหลังกินข้าวเลยครับ', 'ภายในชั่วโมงเดียวเลยครับ'] }, correct: { diag: 'Gastric Dilatation-Volvulus (GDV)', treat: 'Emergency Surgery (Gastropexy)' } },
+                { id: 'ecainis', name: 'Ehrlichia canis', scenario: "ซึม มีไข้ เบื่ออาหาร เลือดออกตามผิวหนัง น้ำหนักลด", symptoms: { ga: 'Depressed, Pale mucous membranes, Petechiae', vitals: 'T 40.0, HR 140', abdomen: 'Mild splenomegaly', heart_lung: 'Normal' }, lab: { cbc: 'Severe Thrombocytopenia, Anemia', chem: 'High Globulin, ALT elevated', ua: 'Proteinuria' }, imaging: { xray: 'Normal', ultra: 'Splenomegaly' }, chat: { questions: ['ตรวจเห็บที่ตัวเห็นไหม?', 'ป้องกันเห็บด้วยอะไรบ้าง?'], answers: ['เห็นเห็บตัวใหญ่ที่ตัวเลยครับ', 'ไม่ได้ป้องกันเลยครับ'] }, correct: { diag: 'E. canis (Blood Parasite)', treat: 'Doxycycline' } },
+                { id: 'choco', name: 'Chocolate Toxicity', scenario: "อาเจียน ท้องเสีย หัวใจเต้นเร็ว กระสับกระส่าย หลังกินช็อคโกแลต", symptoms: { ga: 'Agitated, Hyperactive', vitals: 'T 40.2, HR 200 (Tachyarrhythmia)', abdomen: 'Normal', heart_lung: 'Cardiac arrhythmia' }, lab: { cbc: 'Normal', chem: 'Electrolyte imbalance', ua: 'Normal' }, imaging: { xray: 'Normal', ultra: 'Normal' }, chat: { questions: ['กินช็อคโกแลตอะไร?', 'กินไปกี่ชั่วโมงแล้ว?'], answers: ['กินดาร์กช็อคโกแลตครึ่งแท่งเลยครับ', 'ประมาณ 2 ชั่วโมงที่แล้วครับ'] }, correct: { diag: 'Chocolate Toxicity', treat: 'Induce Vomiting + Activated Charcoal' } },
+                { id: 'heatstroke', name: 'Heat Stroke', scenario: "ล้มพับ หอบแรง น้ำลายไหลเยอะ ตัวร้อนจัดหลังออกกำลังกายกลางแจ้ง", symptoms: { ga: 'Collapsed, Dull, Excessive salivation', vitals: 'T 42.0 (Severe Hyperthermia), HR 200', abdomen: 'Normal', heart_lung: 'Rapid panting' }, lab: { cbc: 'Hemoconcentration, DIC signs', chem: 'Elevated ALT/AST, AKI pattern', ua: 'Myoglobinuria' }, imaging: { xray: 'Normal', ultra: 'Normal' }, chat: { questions: ['อยู่กลางแดดนานแค่ไหน?', 'มีน้ำให้ดื่มไหม?'], answers: ['วิ่งกลางสนามประมาณ 2 ชั่วโมงครับ', 'ลืมเอาน้ำไปให้เลยครับ'] }, correct: { diag: 'Heat Stroke', treat: 'Active Cooling + Oxygen' } },
+                { id: 'dm', name: 'Diabetes Mellitus', scenario: "กินน้ำเยอะมาก ฉี่บ่อย น้ำหนักลด ตาขุ่น มองไม่ชัด", symptoms: { ga: 'Thin body condition, Bilateral cataracts', vitals: 'T 38.5, HR 100', abdomen: 'Hepatomegaly', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Blood Glucose >400 mg/dL', ua: 'Glucosuria, Ketonuria' }, imaging: { xray: 'Hepatomegaly', ultra: 'Hepatic lipidosis pattern' }, chat: { questions: ['กินน้ำมากผิดปกติไหม?', 'น้ำหนักลดมานานแค่ไหน?'], answers: ['กินน้ำทีละเยอะมากเลยครับ', 'ผอมลงประมาณ 2 เดือนแล้วครับ'] }, correct: { diag: 'Diabetes Mellitus', treat: 'Insulin Therapy' } },
+                { id: 'ckd', name: 'Chronic Kidney Disease', scenario: "เบื่ออาหาร อาเจียน ซึม ปากเหม็น ผอมลงมาก กินน้ำเยอะ", symptoms: { ga: 'Thin, Pale mucous membranes, Uremic breath', vitals: 'T 37.5, HR 90', abdomen: 'Small irregular kidneys palpable', heart_lung: 'Normal' }, lab: { cbc: 'Non-regenerative Anemia', chem: 'High BUN/Creatinine, Hyperphosphatemia', ua: 'Isosthenuria (USG 1.012), Proteinuria' }, imaging: { xray: 'Small kidneys bilaterally', ultra: 'Small irregular hyperechoic kidneys' }, chat: { questions: ['ปากเหม็นมานานไหม?', 'ฉี่สีปกติไหม?'], answers: ['ปากเหม็นมาหลายเดือนแล้วครับ', 'ฉี่ใสมากเลยครับ สีอ่อนมาก'] }, correct: { diag: 'Chronic Kidney Disease', treat: 'Fluid Therapy + Kidney Diet' } },
+                { id: 'lepto', name: 'Leptospirosis', scenario: "มีไข้สูง ตาเหลือง อาเจียน ปัสสาวะน้อยลง ปวดกล้ามเนื้อ หลังลุยน้ำท่วม", symptoms: { ga: 'Jaundiced, Painful to touch', vitals: 'T 40.5, HR 150', abdomen: 'Hepatomegaly + Renomegaly', heart_lung: 'Normal' }, lab: { cbc: 'Leukocytosis, Thrombocytopenia', chem: 'High BUN/Creatinine + Elevated Bilirubin', ua: 'Bilirubinuria, Hematuria' }, imaging: { xray: 'Normal', ultra: 'Enlarged kidneys, hyperechoic cortex' }, chat: { questions: ['ไปลุยน้ำมาไหม?', 'ออกไปนอกบ้านบ่อยไหม?'], answers: ['ลุยน้ำท่วมหน้าบ้านมา 2 วันแล้วครับ', 'ออกไปทุกวันเลยครับ'] }, correct: { diag: 'Leptospirosis', treat: 'Antibiotics (Penicillin/Doxy) + Dialysis' } },
+                { id: 'kennel', name: 'Kennel Cough', scenario: "ไอแห้งเสียงดัง บางทีอาเจียนหลังไอ หลังกลับจากโรงแรมสัตว์เลี้ยง", symptoms: { ga: 'Alert, Active', vitals: 'T 38.7, HR 100', abdomen: 'Normal', heart_lung: 'Tracheal sensitivity on palpation' }, lab: { cbc: 'Mild Leukocytosis', chem: 'Normal', ua: '-' }, imaging: { xray: 'Mild bronchointerstitial pattern', ultra: 'Normal' }, chat: { questions: ['เพิ่งไปฝากเลี้ยงมาไหม?', 'ไอแล้วมีอะไรออกมาไหม?'], answers: ['กลับจากโรงแรมสัตว์เลี้ยงเมื่อ 3 วันก่อนครับ', 'บางทีมีเสมหะเล็กน้อยออกมาครับ'] }, correct: { diag: 'Kennel Cough', treat: 'Cough Suppressants + Doxycycline' } },
+                { id: 'demodex', name: 'Demodicosis', scenario: "ขนร่วงเป็นหย่อมๆ รอบตาและขา ผิวหนังแดง มีสะเก็ด ไม่ค่อยคัน", symptoms: { ga: 'Multifocal alopecia, Erythema, Comedones', vitals: 'T 38.5, HR 90', abdomen: 'Normal', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Normal', ua: '-' }, imaging: { xray: 'Normal', ultra: 'Normal' }, chat: { questions: ['ขนร่วงมานานแค่ไหน?', 'คันมากไหม?'], answers: ['ร่วงมาประมาณเดือนกว่าแล้วครับ', 'ไม่ค่อยเกาเลยครับ ไม่คันมาก'] }, correct: { diag: 'Demodicosis', treat: 'Isoxazoline (Nexgard/Bravecto)' } }
             ],
             diagnosisList: ['Parvovirus', 'Gastric Foreign Body', 'Pyometra', 'Cystic Calculi', 'Heartworm Disease', 'E. canis (Blood Parasite)', 'Demodicosis', 'Chocolate Toxicity', 'Gastric Dilatation-Volvulus (GDV)', 'Pancreatitis', 'Chronic Kidney Disease', 'Diabetes Mellitus', 'Hypothyroidism', 'Kennel Cough', 'Mast Cell Tumor', 'Patellar Luxation', 'Hip Dysplasia', 'Heat Stroke', 'Leptospirosis', 'Cherry Eye'],
             treatmentList: ['Supportive Care (Fluids/Antibiotics)', 'Surgery (Gastrotomy)', 'Surgery (OHE) + Fluids', 'Surgery (Cystotomy)', 'Adulticide Treatment', 'Doxycycline', 'Isoxazoline (Nexgard/Bravecto)', 'Induce Vomiting + Activated Charcoal', 'Emergency Surgery (Gastropexy)', 'Fluid Therapy + Pain Management', 'Fluid Therapy + Kidney Diet', 'Insulin Therapy', 'Levothyroxine', 'Cough Suppressants + Doxycycline', 'Surgery + Histopathology', 'Surgery (Sulcoplasty)', 'Weight Control + NSAIDs', 'Active Cooling + Oxygen', 'Antibiotics (Penicillin/Doxy) + Dialysis', 'Surgery (Pocket Technique)']
@@ -601,7 +606,6 @@
             }
         };
 
-        // ✅ แก้ไข 2: AI CHAT SYSTEM - ใช้ Cloudflare Worker แทน API Key โดยตรง
         const ChatSystem = {
             chatHistory: [],
 
@@ -631,7 +635,6 @@
                 this.showTyping();
 
                 try {
-                    // ✅ เรียก Worker โดยตรง ไม่ต้องเช็ค API Key
                     const response = await this.callWorker(text);
                     this.hideTyping();
                     this.addMessage('ai', response);
@@ -639,14 +642,12 @@
                 } catch (e) {
                     this.hideTyping();
                     console.error("Worker call failed:", e);
-                    // Fallback response
                     const fallbackResponse = this.getFallbackResponse(text);
                     this.addMessage('ai', fallbackResponse);
                     this.updateAIStatus(false);
                 }
             },
 
-            // ✅ แก้ไข 3: ฟังก์ชันใหม่ เรียก Worker URL เดียว ไม่มี model loop
             async callWorker(userMessage) {
                 const caseData = AppState.currentCase;
                 const systemPrompt = `
@@ -672,9 +673,7 @@
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Worker error ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`Worker error ${response.status}`);
 
                 const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
@@ -685,14 +684,11 @@
             getFallbackResponse(message) {
                 const lowerMessage = message.toLowerCase();
                 const currentCase = AppState.currentCase;
-                
                 const match = currentCase.chat.qa_pairs.find(pair => 
                     lowerMessage.includes(pair.question.toLowerCase()) || 
                     pair.question.toLowerCase().includes(lowerMessage)
                 );
-                
                 if (match) return match.answer;
-                
                 const generics = ["ไม่แน่ใจเลยอ่ะหมอ", "รีบช่วยน้องก่อนหมอ", "ไม่รู้อะไรเลย ช่วยน้องด้วยหมอ"];
                 if (lowerMessage.includes("ไหม") || lowerMessage.includes("หรือเปล่า")) {
                     return Math.random() > 0.5 ? "ไม่แน่ใจครับหมอ" : "น่าจะใช่นะครับ";
@@ -703,12 +699,10 @@
             addMessage(role, text) {
                 const container = document.getElementById('chat-container');
                 const div = document.createElement('div');
-                
                 let msgClass = "";
                 if (role === 'user') msgClass = "bg-teal-600 text-white rounded-tr-none self-end";
                 else if (role === 'system') msgClass = "bg-red-100 text-red-700 border-red-200 self-center text-center w-full";
                 else msgClass = "bg-white border border-slate-200 text-slate-700 rounded-tl-none self-start";
-                
                 div.className = `${msgClass} p-3 rounded-2xl text-sm max-w-[85%] shadow-sm fade-in`;
                 div.innerText = text;
                 container.appendChild(div);
