@@ -24,8 +24,15 @@
             db: null, auth: null, user: null, appId: 'vetx-prod-ai',
             async init() {
                 try {
-                    const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-                    if (!Object.keys(firebaseConfig).length) return;
+                    const firebaseConfig = {
+                    apiKey: "AIzaSyCWy4zdDhOUfpCFeokaJVJ5vz3dHoWYC1o",
+                    authDomain: "vetx-prod.firebaseapp.com",
+                    projectId: "vetx-prod",
+                    storageBucket: "vetx-prod.firebasestorage.app",
+                    messagingSenderId: "308651126103",
+                    appId: "1:308651126103:web:10e4417df8e3bf9354a212",
+                    measurementId: "G-W6RL06BFLF"
+            };
                     const app = initializeApp(firebaseConfig);
                     this.auth = getAuth(app);
                     this.db = getFirestore(app);
