@@ -252,10 +252,11 @@
         </nav>
 
         <!-- CHAT FAB -->
-        <div class="md:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+        <!-- Mobile FAB: fixed above bottom nav -->
+        <div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 md:hidden">
             <button onclick="ChatSystem.toggle()" id="chat-fab-mobile" class="bg-teal-600 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center hover:bg-teal-700 active:scale-90 transition-all border-4 border-slate-50 relative"><i data-lucide="message-circle" class="w-7 h-7"></i><span id="chat-badge-mobile" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white hidden animate-bounce"></span></button>
         </div>
-        <button onclick="ChatSystem.toggle()" id="chat-fab-desktop" class="hidden md:flex fixed bottom-8 right-8 z-40 bg-teal-600 text-white w-14 h-14 rounded-full shadow-xl items-center justify-center hover:bg-teal-700 active:scale-90 transition-all border-4 border-white relative"><i data-lucide="message-circle" class="w-7 h-7"></i><span id="chat-badge-desktop" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white hidden animate-bounce"></span></button>
+
 
         <!-- CHAT MODAL -->
         <div id="chat-modal" class="fixed inset-x-0 bottom-0 z-[60] bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] h-[75vh] md:h-[600px] md:w-[400px] md:right-8 md:left-auto md:bottom-24 md:rounded-2xl chat-closed chat-modal flex flex-col border border-slate-100 overflow-hidden">
@@ -278,6 +279,9 @@
         </div>
         <div id="chat-overlay" onclick="ChatSystem.toggle()" class="fixed inset-0 bg-black/40 z-50 hidden md:hidden backdrop-blur-[2px]"></div>
     </div>
+
+    <!-- DESKTOP CHAT FAB (outside layout to avoid overflow-hidden clipping) -->
+    <button onclick="ChatSystem.toggle()" id="chat-fab-desktop" style="display:none" class="fixed bottom-8 right-8 z-40 bg-teal-600 text-white w-14 h-14 rounded-full shadow-xl items-center justify-center hover:bg-teal-700 active:scale-90 transition-all border-4 border-white"><i data-lucide="message-circle" class="w-7 h-7"></i><span id="chat-badge-desktop" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white hidden animate-bounce"></span></button>
 
     <!-- MODALS -->
     <div id="register-modal" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4">
@@ -718,14 +722,16 @@
                 const fabM = document.getElementById('chat-fab-mobile');
                 const fabD = document.getElementById('chat-fab-desktop');
                 const isOpen = AppState.toggleChat();
+                const isMobile = window.innerWidth < 768;
                 if (isOpen) {
                     modal.classList.remove('chat-closed'); modal.classList.add('chat-open');
-                    overlay.classList.remove('hidden');
-                    if(fabM) fabM.classList.add('scale-0'); if(fabD) fabD.classList.add('scale-0');
+                    if (isMobile) { overlay.classList.remove('hidden'); if(fabM) fabM.parentElement.style.display='none'; }
+                    else { if(fabD) fabD.style.display='none'; }
                 } else {
                     modal.classList.add('chat-closed'); modal.classList.remove('chat-open');
                     overlay.classList.add('hidden');
-                    if(fabM) fabM.classList.remove('scale-0'); if(fabD) fabD.classList.remove('scale-0');
+                    if (isMobile) { if(fabM) fabM.parentElement.style.display='block'; }
+                    else { if(fabD) fabD.style.display='flex'; }
                 }
             },
 
@@ -995,7 +1001,14 @@ Output ONLY dialogue.`;
             nextCase() { this.loadNewCase(); }
         };
 
-        window.addEventListener('load', () => { lucide.createIcons(); AppState.updateLevelUI(); });
+        window.addEventListener('load', () => {
+            lucide.createIcons();
+            AppState.updateLevelUI();
+            // Show correct FAB based on screen size
+            const isMobile = window.innerWidth < 768;
+            const fabD = document.getElementById('chat-fab-desktop');
+            if (!isMobile && fabD) fabD.style.display = 'flex';
+        });
     </script>
 </body>
 </html>
