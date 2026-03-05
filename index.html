@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4PS89NXG6X"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -9,32 +8,28 @@
       gtag('js', new Date());
       gtag('config', 'G-4PS89NXG6X');
     </script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VETx | Vet Clinical Simulation</title>
-    
-    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         window.FirebaseApp = {
             db: null, auth: null, user: null, appId: 'vetx-prod-ai',
             async init() {
                 try {
                     const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-                    if (!Object.keys(firebaseConfig).length) return; 
+                    if (!Object.keys(firebaseConfig).length) return;
                     const app = initializeApp(firebaseConfig);
                     this.auth = getAuth(app);
                     this.db = getFirestore(app);
-                    if (window.__initial_auth_token) { await signInWithCustomToken(this.auth, window.__initial_auth_token); } 
+                    if (window.__initial_auth_token) { await signInWithCustomToken(this.auth, window.__initial_auth_token); }
                     else { await signInAnonymously(this.auth); }
                     onAuthStateChanged(this.auth, (user) => { this.user = user; });
                 } catch (e) { console.log("Offline Mode Active"); }
@@ -43,8 +38,8 @@
                 if (!this.db || !this.user) return;
                 try {
                     const userRef = doc(this.db, 'artifacts', this.appId, 'public', 'data', 'leaderboard', this.user.uid);
-                    await setDoc(userRef, { name: vetName, level: level, totalCasesSolved: totalCasesSolved, updatedAt: serverTimestamp() });
-                } catch (e) { }
+                    await setDoc(userRef, { name: vetName, level, totalCasesSolved, updatedAt: serverTimestamp() });
+                } catch (e) {}
             },
             async getLeaderboard() {
                 if (!this.db) return [];
@@ -72,7 +67,6 @@
         .nav-item-desktop.active { @apply border-r-4 border-teal-600 bg-teal-50 text-teal-700 font-semibold; }
         .nav-item-desktop { @apply border-r-4 border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all; }
         .nav-item-mobile.active { @apply text-teal-600; }
-        .nav-item-mobile.active i { @apply fill-current; }
         .nav-item-mobile { @apply text-slate-400 flex flex-col items-center justify-center gap-1 transition-colors; }
         .chat-modal { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
         .chat-open { transform: translateY(0); }
@@ -87,9 +81,8 @@
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        .level-badge-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #8a6d0b; border: 1px solid #eec028; }
-        .level-badge-silver { background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%); color: #424242; border: 1px solid #9e9e9e; }
-        .level-badge-bronze { background: linear-gradient(135deg, #fcead7 0%, #f5d0a9 100%); color: #8d5c2c; border: 1px solid #e6b88a; }
+        .level-badge-gold { background: linear-gradient(135deg, #FFD700, #FDB931); color: #8a6d0b; border: 1px solid #eec028; }
+        .level-badge-silver { background: linear-gradient(135deg, #E0E0E0, #BDBDBD); color: #424242; border: 1px solid #9e9e9e; }
     </style>
 </head>
 <body class="bg-slate-50 h-[100dvh] flex flex-col overflow-hidden text-slate-800">
@@ -99,16 +92,12 @@
         <div class="flex items-center gap-2">
             <div class="bg-teal-600 p-1.5 rounded-lg text-white shadow-sm relative">
                 <i data-lucide="stethoscope" class="w-4 h-4"></i>
-                <div id="ai-status-dot" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white" title="AI Status"></div>
+                <div id="ai-status-dot" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white"></div>
             </div>
-            <h1 class="font-heading font-bold text-lg text-slate-800 tracking-tight">
-                VET<span class="text-teal-600">x</span> <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 ml-1 bg-slate-50">AI-Diag</span>
-            </h1>
+            <h1 class="font-heading font-bold text-lg text-slate-800 tracking-tight">VET<span class="text-teal-600">x</span> <span class="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 ml-1 bg-slate-50">AI-Diag</span></h1>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="Leaderboard.show()" class="p-1.5 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition active:scale-95 border border-yellow-200">
-                <i data-lucide="crown" class="w-4 h-4"></i>
-            </button>
+            <button onclick="Leaderboard.show()" class="p-1.5 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition active:scale-95 border border-yellow-200"><i data-lucide="crown" class="w-4 h-4"></i></button>
             <div class="flex items-center bg-slate-100 rounded-full border border-slate-200 p-1 pl-3 pr-2 gap-2" id="level-container">
                 <div class="flex flex-col items-end leading-none">
                     <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Level</span>
@@ -116,21 +105,19 @@
                 </div>
                 <div class="h-6 w-px bg-slate-200 mx-1"></div>
                 <div class="flex flex-col items-start w-16">
-                    <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mb-1">
-                        <div id="level-progress-bar" class="bg-teal-500 h-full rounded-full w-0 transition-all duration-500"></div>
-                    </div>
+                    <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mb-1"><div id="level-progress-bar" class="bg-teal-500 h-full rounded-full w-0 transition-all duration-500"></div></div>
                     <span class="text-[9px] text-slate-500 font-bold ml-0.5" id="level-progress-text">0/2 Wins</span>
                 </div>
             </div>
-            <div id="timer-badge" class="flex items-center gap-1.5 bg-slate-800 text-white px-3 py-1 rounded-full font-mono text-xs font-bold transition-colors shadow-sm min-w-[50px] justify-center ml-1">
-                <span id="timer-display">01:30</span>
+            <div id="timer-badge" class="flex items-center gap-1.5 bg-slate-800 text-white px-3 py-1 rounded-full font-mono text-xs font-bold shadow-sm min-w-[50px] justify-center ml-1">
+                <span id="timer-display">02:00</span>
             </div>
         </div>
     </header>
 
     <!-- MAIN LAYOUT -->
     <div class="flex flex-1 overflow-hidden relative">
-        <!-- SIDEBAR -->
+        <!-- SIDEBAR (desktop) -->
         <nav class="hidden md:flex w-64 bg-white border-r border-slate-200 flex-col overflow-y-auto z-20">
             <div class="p-6">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Workflow</p>
@@ -147,12 +134,12 @@
         </nav>
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 bg-slate-50 overflow-y-auto overflow-x-hidden p-4 pb-32 md:p-8 relative w-full">
+        <main class="flex-1 bg-slate-50 overflow-y-auto overflow-x-hidden p-4 pb-32 md:p-8 w-full">
             <!-- HISTORY -->
             <div id="section-history" class="space-y-4 fade-in">
                 <h2 class="text-xl font-heading font-bold text-slate-800 flex items-center gap-2 md:hidden"><i data-lucide="clipboard-list" class="w-5 h-5 text-teal-600"></i> ประวัติผู้ป่วย</h2>
                 <div class="mobile-card relative overflow-hidden">
-                    <div class="flex items-start gap-4 relative z-10">
+                    <div class="flex items-start gap-4">
                         <div class="w-20 h-20 rounded-2xl bg-slate-100 flex-shrink-0 border-2 border-white shadow-md overflow-hidden">
                             <img id="history-img" src="" class="w-full h-full object-cover" alt="Patient" onerror="this.src='https://placehold.co/400x400?text=Pet'">
                         </div>
@@ -165,11 +152,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-5 pt-4 border-t border-slate-100 relative z-10">
+                    <div class="mt-5 pt-4 border-t border-slate-100">
                         <div class="flex items-center gap-2 mb-1.5">
                             <div class="bg-red-100 p-1 rounded"><i data-lucide="alert-circle" class="w-3 h-3 text-red-600"></i></div>
                             <span class="text-xs text-red-600 font-bold uppercase tracking-wide">อาการหลัก (CC)</span>
                         </div>
+                        <!-- ✅ แสดง cc_display (คลุมเครือ) -->
                         <p id="info-cc" class="text-sm text-slate-700 font-medium leading-relaxed pl-1">-</p>
                     </div>
                 </div>
@@ -191,10 +179,10 @@
                 <div class="mobile-card bg-gradient-to-br from-white to-slate-50 text-center py-8">
                     <p class="text-sm text-slate-400 mb-6 font-medium">แตะส่วนต่างๆ เพื่อทำการตรวจ</p>
                     <div class="grid grid-cols-2 gap-4">
-                        <button onclick="Examination.perform('ga')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 active:border-teal-500 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600"><i data-lucide="eye" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">สภาพทั่วไป</span></button>
-                        <button onclick="Examination.perform('vitals')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 active:border-teal-500 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-600"><i data-lucide="thermometer" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">สัญญาณชีพ</span></button>
-                        <button onclick="Examination.perform('abdomen')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 active:border-teal-500 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center text-amber-600"><i data-lucide="hand" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">ช่องท้อง</span></button>
-                        <button onclick="Examination.perform('heart_lung')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 active:border-teal-500 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600"><i data-lucide="stethoscope" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">หัวใจ/ปอด</span></button>
+                        <button onclick="Examination.perform('ga')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600"><i data-lucide="eye" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">สภาพทั่วไป</span></button>
+                        <button onclick="Examination.perform('vitals')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-600"><i data-lucide="thermometer" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">สัญญาณชีพ</span></button>
+                        <button onclick="Examination.perform('abdomen')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center text-amber-600"><i data-lucide="hand" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">ช่องท้อง</span></button>
+                        <button onclick="Examination.perform('heart_lung')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md"><div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center text-purple-600"><i data-lucide="stethoscope" class="w-5 h-5"></i></div><span class="text-xs font-bold text-slate-600">หัวใจ/ปอด</span></button>
                     </div>
                 </div>
                 <div id="physical-results" class="space-y-2 pb-20"></div>
@@ -205,8 +193,8 @@
                 <h2 class="text-xl font-heading font-bold text-slate-800 flex items-center gap-2 md:hidden"><i data-lucide="droplet" class="w-5 h-5 text-teal-600"></i> ผลแล็บ</h2>
                 <div class="mobile-card p-4">
                     <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-                        <button onclick="Laboratory.runTest('cbc')" class="flex-shrink-0 px-4 py-2.5 bg-slate-800 text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg shadow-slate-200">CBC</button>
-                        <button onclick="Laboratory.runTest('chem')" class="flex-shrink-0 px-4 py-2.5 bg-slate-800 text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg shadow-slate-200">Blood Chem</button>
+                        <button onclick="Laboratory.runTest('cbc')" class="flex-shrink-0 px-4 py-2.5 bg-slate-800 text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg">CBC</button>
+                        <button onclick="Laboratory.runTest('chem')" class="flex-shrink-0 px-4 py-2.5 bg-slate-800 text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg">Blood Chem</button>
                         <button onclick="Laboratory.runTest('ua')" class="flex-shrink-0 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-xs font-bold active:scale-95">Urine</button>
                     </div>
                 </div>
@@ -255,7 +243,7 @@
         </main>
 
         <!-- BOTTOM NAV -->
-        <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-slate-200 flex justify-between items-center px-6 py-2 z-40 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-slate-200 flex justify-between items-center px-6 py-2 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
             <button onclick="Navigation.showSection('history')" id="nav-m-history" class="nav-item-mobile active"><i data-lucide="clipboard-list" class="w-6 h-6"></i><span class="text-[10px] font-medium">ประวัติ</span></button>
             <button onclick="Navigation.showSection('physical')" id="nav-m-physical" class="nav-item-mobile"><i data-lucide="hand" class="w-6 h-6"></i><span class="text-[10px] font-medium">ตรวจ</span></button>
             <div class="w-12"></div>
@@ -267,11 +255,11 @@
         <div class="md:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
             <button onclick="ChatSystem.toggle()" id="chat-fab-mobile" class="bg-teal-600 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center hover:bg-teal-700 active:scale-90 transition-all border-4 border-slate-50 relative"><i data-lucide="message-circle" class="w-7 h-7"></i><span id="chat-badge-mobile" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white hidden animate-bounce"></span></button>
         </div>
-        <button onclick="ChatSystem.toggle()" id="chat-fab-desktop" class="hidden md:flex fixed bottom-8 right-8 z-40 bg-teal-600 text-white w-14 h-14 rounded-full shadow-xl items-center justify-center hover:bg-teal-700 active:scale-90 transition-all border-4 border-white"><i data-lucide="message-circle" class="w-7 h-7"></i><span id="chat-badge-desktop" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white hidden animate-bounce"></span></button>
+        <button onclick="ChatSystem.toggle()" id="chat-fab-desktop" class="hidden md:flex fixed bottom-8 right-8 z-40 bg-teal-600 text-white w-14 h-14 rounded-full shadow-xl items-center justify-center hover:bg-teal-700 active:scale-90 transition-all border-4 border-white relative"><i data-lucide="message-circle" class="w-7 h-7"></i><span id="chat-badge-desktop" class="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white hidden animate-bounce"></span></button>
 
         <!-- CHAT MODAL -->
         <div id="chat-modal" class="fixed inset-x-0 bottom-0 z-[60] bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] h-[75vh] md:h-[600px] md:w-[400px] md:right-8 md:left-auto md:bottom-24 md:rounded-2xl chat-closed chat-modal flex flex-col border border-slate-100 overflow-hidden">
-            <div onclick="ChatSystem.toggle()" class="w-full h-12 flex items-center justify-center cursor-pointer bg-slate-50/80 backdrop-blur border-b border-slate-100 active:bg-slate-100"><div class="w-12 h-1.5 bg-slate-300 rounded-full"></div></div>
+            <div onclick="ChatSystem.toggle()" class="w-full h-12 flex items-center justify-center cursor-pointer bg-slate-50/80 border-b border-slate-100 active:bg-slate-100"><div class="w-12 h-1.5 bg-slate-300 rounded-full"></div></div>
             <div class="px-5 py-3 border-b border-slate-100 flex justify-between items-center bg-white">
                 <div><h3 class="font-heading font-bold text-lg text-slate-800">Owner Chat</h3><p class="text-xs text-slate-400">คุยกับเจ้าของสัตว์ (AI Enabled)</p></div>
                 <div class="flex items-center gap-1.5"><span id="chat-status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span><span class="text-[10px] text-slate-500 font-bold">Online</span></div>
@@ -283,7 +271,7 @@
             </div>
             <div class="p-3 bg-white pb-8 md:pb-3 border-t border-slate-100">
                 <div class="flex gap-2 items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 focus-within:border-teal-500 focus-within:ring-2 focus-within:ring-teal-100 transition-all">
-                    <input type="text" id="chat-input" class="flex-1 px-3 py-2 bg-transparent text-sm outline-none placeholder:text-slate-400" placeholder="พิมพ์คำถามได้เลย..." onkeypress="if(event.key === 'Enter') ChatSystem.send()">
+                    <input type="text" id="chat-input" class="flex-1 px-3 py-2 bg-transparent text-sm outline-none placeholder:text-slate-400" placeholder="พิมพ์คำถามได้เลย..." onkeypress="if(event.key==='Enter')ChatSystem.send()">
                     <button onclick="ChatSystem.send()" class="bg-teal-600 text-white w-10 h-10 rounded-xl flex items-center justify-center active:scale-95 shadow-md"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
                 </div>
             </div>
@@ -293,17 +281,17 @@
 
     <!-- MODALS -->
     <div id="register-modal" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl relative flex flex-col p-8 text-center">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl p-8 text-center">
             <div class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-600"><i data-lucide="user-plus" class="w-10 h-10"></i></div>
             <h2 class="text-2xl font-bold font-heading text-slate-800 mb-2">ลงทะเบียนสัตวแพทย์</h2>
             <p class="text-slate-500 text-sm mb-6">ตั้งชื่อเพื่อใช้ในการจัดอันดับ (Leaderboard)</p>
-            <input type="text" id="vet-name-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-center text-lg font-bold text-slate-700 outline-none focus:ring-2 focus:ring-teal-500 mb-4" placeholder="ชื่อคุณหมอ (ภาษาอังกฤษ)">
+            <input type="text" id="vet-name-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-center text-lg font-bold text-slate-700 outline-none focus:ring-2 focus:ring-teal-500 mb-4" placeholder="ชื่อคุณหมอ">
             <button onclick="AppState.registerUser()" class="w-full bg-teal-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-teal-700 transition">เริ่มงานทันที!</button>
         </div>
     </div>
 
     <div id="leaderboard-modal" class="hidden fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
-        <div class="bg-white rounded-[2rem] w-full max-w-sm h-[600px] overflow-hidden shadow-2xl flex flex-col animate-[pop_0.4s_ease-out]">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm h-[600px] overflow-hidden shadow-2xl flex flex-col">
             <div class="bg-slate-900 p-6 text-white text-center relative flex-none">
                 <button onclick="Leaderboard.hide()" class="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
                 <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg border-4 border-slate-800"><i data-lucide="trophy" class="w-8 h-8 text-white"></i></div>
@@ -317,9 +305,9 @@
     </div>
 
     <div id="tutorial-modal" class="hidden fixed inset-0 z-[90] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2rem] w-full max-w-sm md:max-w-md overflow-hidden shadow-2xl relative flex flex-col h-[520px]">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl flex flex-col h-[520px]">
             <div class="flex-1 flex flex-col items-center justify-center text-center p-8">
-                <div id="slide-1" class="tutorial-slide active flex flex-col items-center">
+                <div id="slide-1" class="tutorial-slide flex flex-col items-center">
                     <div class="w-28 h-28 bg-blue-50 rounded-full flex items-center justify-center mb-8 text-blue-600 shadow-inner"><i data-lucide="search" class="w-14 h-14"></i></div>
                     <h2 class="text-2xl font-bold font-heading text-slate-800 mb-3">1. ตรวจรักษา</h2>
                     <p class="text-slate-500 text-sm leading-relaxed px-4">ใช้เครื่องมือต่างๆ ตรวจร่างกายและส่งแล็บเพื่อหาสาเหตุอาการป่วย</p>
@@ -337,7 +325,7 @@
             </div>
             <div class="px-8 pb-8 pt-2">
                 <div class="flex justify-center gap-2 mb-6">
-                    <div class="w-2 h-2 rounded-full bg-slate-200 transition-all duration-300 active bg-teal-600 w-6" id="dot-1"></div>
+                    <div class="w-6 h-2 rounded-full bg-teal-600 transition-all duration-300" id="dot-1"></div>
                     <div class="w-2 h-2 rounded-full bg-slate-200 transition-all duration-300" id="dot-2"></div>
                     <div class="w-2 h-2 rounded-full bg-slate-200 transition-all duration-300" id="dot-3"></div>
                 </div>
@@ -348,28 +336,27 @@
     </div>
 
     <div id="intro-modal" class="hidden fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl animate-[fadeIn_0.4s_ease-out]">
-            <div class="bg-slate-900 p-8 text-white text-center relative">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl">
+            <div class="bg-slate-900 p-8 text-white text-center">
                 <div class="inline-block p-3 bg-white/10 rounded-2xl mb-3"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>
                 <h2 class="text-2xl font-bold font-heading">ฉุกเฉิน!</h2>
                 <p class="text-slate-400 text-sm mt-1">มีเคสใหม่เข้ามาขอความช่วยเหลือ</p>
             </div>
             <div class="p-6">
-                <div class="bg-gradient-to-br from-orange-50 to-white p-5 rounded-2xl border border-orange-100 shadow-sm mb-6 relative overflow-hidden">
-                    <div class="relative z-10">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i data-lucide="quote" class="w-5 h-5 text-orange-400 fill-current"></i>
-                            <span class="text-xs font-bold text-orange-800 uppercase tracking-wide">สถานการณ์</span>
-                        </div>
-                        <p id="intro-narrative" class="text-slate-700 font-medium text-lg leading-relaxed italic">"..."</p>
-                        <div class="mt-4 flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-sm"><img id="intro-img-mini" src="" class="w-full h-full object-cover"></div>
-                            <div><div id="intro-patient-name" class="text-base font-bold text-slate-800">น้อง...</div></div>
-                        </div>
+                <div class="bg-gradient-to-br from-orange-50 to-white p-5 rounded-2xl border border-orange-100 shadow-sm mb-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i data-lucide="quote" class="w-5 h-5 text-orange-400 fill-current"></i>
+                        <span class="text-xs font-bold text-orange-800 uppercase tracking-wide">สถานการณ์</span>
+                    </div>
+                    <!-- ✅ narrative ใช้ cc_display (คลุมเครือ) -->
+                    <p id="intro-narrative" class="text-slate-700 font-medium text-lg leading-relaxed italic">"..."</p>
+                    <div class="mt-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-sm"><img id="intro-img-mini" src="" class="w-full h-full object-cover"></div>
+                        <div id="intro-patient-name" class="text-base font-bold text-slate-800">น้อง...</div>
                     </div>
                 </div>
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-6 text-sm text-slate-500">
-                    <div class="flex justify-between items-center mb-1"><span>เวลาจำกัด:</span><span id="start-time-text" class="font-bold text-slate-800">01:30</span></div>
+                    <div class="flex justify-between items-center mb-1"><span>เวลาจำกัด:</span><span id="start-time-text" class="font-bold text-slate-800">02:00</span></div>
                     <div class="flex justify-between items-center"><span>ความยาก:</span><span id="difficulty-text" class="font-bold text-teal-600">Level 1</span></div>
                 </div>
                 <button onclick="GameController.startCase()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-slate-800 active:scale-95 transition flex items-center justify-center gap-2">รับเคสนี้ <i data-lucide="arrow-right-circle" class="w-5 h-5"></i></button>
@@ -394,9 +381,9 @@
             </div>
         </div>
     </div>
-    
+
     <div id="timeout-modal" class="hidden fixed inset-0 z-[60] bg-red-900/90 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl animate-[pop_0.4s_ease-out] text-center p-10">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl text-center p-10">
             <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500 border-4 border-white shadow-lg"><i data-lucide="timer-off" class="w-12 h-12"></i></div>
             <h2 class="text-3xl font-bold font-heading text-slate-800 mb-2">หมดเวลา!</h2>
             <p class="text-slate-500 mb-8">คุณใช้เวลาเกินกำหนด</p>
@@ -407,11 +394,10 @@
     <!-- LOGIC -->
     <script>
         const WORKER_URL = "https://vetx.anuphong-pa.workers.dev/";
-        const CONFIG = { BASE_TIME: 120 };
+        const CONFIG = { BASE_TIME: 120 }; // 2:00 นาที
 
-        // DATA
         const CASE_DATA = {
-            names: ['Thong-Muan', 'Kafae', 'Oliang', 'Milo', 'Oreo', 'Pekpo', 'Chao-Guay', 'Daeng', 'Moo-Ping', 'Khao-Suay', 'Som-O', 'Maprang', 'Jao-Jor', 'Tofu', 'Mochi', 'Latte', 'Palo', 'Khao-Tom', 'Jiggy'],
+            names: ['Thong-Muan','Kafae','Oliang','Milo','Oreo','Pekpo','Chao-Guay','Daeng','Moo-Ping','Khao-Suay','Som-O','Maprang','Jao-Jor','Tofu','Mochi','Latte','Palo','Khao-Tom','Jiggy'],
             breeds: [
                 { name: 'Golden Retriever', img: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&w=300&q=80' },
                 { name: 'Pomeranian', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=300&q=80' },
@@ -419,34 +405,167 @@
                 { name: 'Pug', img: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=300&q=80' },
                 { name: 'Siberian Husky', img: 'https://images.unsplash.com/photo-1560525821-d5615ef80c69?auto=format&fit=crop&w=300&q=80' },
                 { name: 'French Bulldog', img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=300&q=80' },
-                { name: 'Chihuahua', img: 'https://images.unsplash.com/photo-1607386176712-d8baeb6178a7?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-                { name: 'Shih Tzu', img: 'https://images.unsplash.com/photo-1695457601176-b779cf426428?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
+                { name: 'Chihuahua', img: 'https://images.unsplash.com/photo-1607386176712-d8baeb6178a7?fm=jpg&q=60&w=3000&auto=format&fit=crop' },
+                { name: 'Shih Tzu', img: 'https://images.unsplash.com/photo-1695457601176-b779cf426428?fm=jpg&q=60&w=3000&auto=format&fit=crop' }
             ],
             diseases: [
-                // ===== ORIGINAL 5 CASES =====
-                { id: 'parvo', name: 'Parvovirus', scenario: "อาเจียนเป็นเลือด ถ่ายเหลวเหม็นคาวรุนแรง ซึมมาก ไม่กินอาหาร", symptoms: { ga: 'Severe dehydration (8%), Lethargic', vitals: 'High Fever (T 40.5), HR 160', abdomen: 'Fluid filled loops', heart_lung: 'Normal' }, lab: { cbc: 'Severe Leukopenia (WBC 2,000)', chem: 'Hypoglycemia', ua: '-' }, imaging: { xray: 'Gas filled intestinal loops', ultra: 'Thickened intestinal wall' }, chat: { questions: ['ถ่ายเป็นยังไง?', 'อาเจียนบ่อยไหม?'], answers: ['ถ่ายเป็นเลือดสด เหม็นมากครับ', 'อาเจียนเกือบตลอดเวลา'] }, correct: { diag: 'Parvovirus', treat: 'Supportive Care (Fluids/Antibiotics)' } },
-                { id: 'fb', name: 'Gastric Foreign Body', scenario: "อาเจียนทุกครั้งหลังกินอาหาร ซึม ถ่ายอุจจาระน้อยลง", symptoms: { ga: 'Alert but painful', vitals: 'T 38.5, HR 120', abdomen: 'Painful cranial abdomen', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Mild Hypokalemia', ua: '-' }, imaging: { xray: 'Radiopaque object in stomach', ultra: 'Acoustic shadowing in stomach' }, chat: { questions: ['ไปกินอะไรผิดสำแดงมา?', 'อ้วกหลังกินข้าวนานไหม?'], answers: ['ไม่รู้เลย แต่เห็นชอบเอาผ้าไปเล่นผ้า', 'อ้วกแทบจะทันทีหลังกิน'] }, correct: { diag: 'Gastric Foreign Body', treat: 'Surgery (Gastrotomy)' } },
-                { id: 'pyo', name: 'Pyometra (Closed)', fixedSex: 'Female', scenario: "ซึม กินน้ำเยอะ ฉี่เยอะ ท้องกาง มีไข้", symptoms: { ga: 'Depressed, Dehydrated', vitals: 'T 39.5, HR 140', abdomen: 'Distended, Painful', heart_lung: 'Normal' }, lab: { cbc: 'High WBC (Neutrophilia)', chem: 'High BUN/Creatinine (Azotemia)', ua: '-' }, imaging: { xray: 'Tubular soft tissue density in abdomen', ultra: 'Fluid filled uterus (Hypoechoic)' }, chat: { questions: ['ทำหมันหรือยัง?', 'กินน้ำเยอะผิดปกติไหม?'], answers: ['ยังไม่ทำครับ', 'กินน้ำเยอะมาก ฉี่บ่อย'] }, correct: { diag: 'Pyometra', treat: 'Surgery (OHE) + Fluids' } },
-                { id: 'stone', name: 'Cystic Calculi', scenario: "ฉี่กะปริดกะปรอย ฉี่มีเลือดปน ร้องเจ็บเวลาฉี่", symptoms: { ga: 'Normal', vitals: 'Normal', abdomen: 'Palpable hard mass in bladder', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Normal', ua: 'Hematuria, Crystals found' }, imaging: { xray: 'Radiopaque stones in bladder', ultra: 'Hyperechoic stones with shadowing' }, chat: { questions: ['ฉี่ลำบากไหม?', 'ฉี่มีเลือดปนไหม?'], answers: ['เบ่งนานมากครับกว่าจะออก', 'มีเลือดหยดๆ ปนออกมา'] }, correct: { diag: 'Cystic Calculi', treat: 'Surgery (Cystotomy)' } },
-                { id: 'heartworm', name: 'Heartworm Disease', scenario: "ไอแห้งๆ เหนื่อยง่าย ท้องมาร น้ำหนักลด", symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' }, lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' }, imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' }, chat: { questions: ['ป้องกันพยาธิหัวใจไหม?', 'ไอตอนไหนเป็นพิเศษ?'], answers: ['ไม่เคยป้องกันเลยครับ', 'ไอแห้งๆ ตลอดเวลา'] }, correct: { diag: 'Heartworm Disease', treat: 'Adulticide Treatment' } },
-
-                // ===== NEW 10 CASES =====
-                { id: 'pancreatitis', name: 'Pancreatitis', scenario: "ปวดท้องรุนแรง อาเจียนบ่อย ไม่กินอาหาร หลังกินอาหารมันๆ", symptoms: { ga: 'Painful, hunched posture (Prayer position)', vitals: 'T 39.5, HR 130', abdomen: 'Severe cranial abdominal pain', heart_lung: 'Normal' }, lab: { cbc: 'Mild Leukocytosis', chem: 'High Lipase/Amylase, Hyperlipidemia', ua: '-' }, imaging: { xray: 'Ground glass opacity cranial abdomen', ultra: 'Hyperechoic pancreas + peripancreatic fluid' }, chat: { questions: ['กินอาหารอะไรมาก่อนไหม?', 'อาเจียนบ่อยแค่ไหน?'], answers: ['กินหมูทอดเยอะมากเลยครับเมื่อคืน', 'อาเจียนทุก 30 นาทีเลยครับ'] }, correct: { diag: 'Pancreatitis', treat: 'Fluid Therapy + Pain Management' } },
-                { id: 'gdv', name: 'GDV', scenario: "ท้องโตอย่างรวดเร็ว เรอไม่ออก ซึมมาก หายใจลำบาก", symptoms: { ga: 'Severely distressed, Tachycardia', vitals: 'T 38.0 (Shock), HR 180', abdomen: 'Tympanic, grossly distended', heart_lung: 'Rapid shallow breathing' }, lab: { cbc: 'Stress leukogram', chem: 'Elevated Lactate, Electrolyte imbalance', ua: '-' }, imaging: { xray: 'Double bubble sign (Compartmentalized gas)', ultra: 'Gastric torsion, reduced wall motility' }, chat: { questions: ['ออกกำลังหลังกินข้าวเลยไหม?', 'ท้องโตเร็วแค่ไหน?'], answers: ['วิ่งเล่นทันทีหลังกินข้าวเลยครับ', 'ภายในชั่วโมงเดียวเลยครับ'] }, correct: { diag: 'Gastric Dilatation-Volvulus (GDV)', treat: 'Emergency Surgery (Gastropexy)' } },
-                { id: 'ecainis', name: 'Ehrlichia canis', scenario: "ซึม มีไข้ เบื่ออาหาร เลือดออกตามผิวหนัง น้ำหนักลด", symptoms: { ga: 'Depressed, Pale mucous membranes, Petechiae', vitals: 'T 40.0, HR 140', abdomen: 'Mild splenomegaly', heart_lung: 'Normal' }, lab: { cbc: 'Severe Thrombocytopenia, Anemia', chem: 'High Globulin, ALT elevated', ua: 'Proteinuria' }, imaging: { xray: 'Normal', ultra: 'Splenomegaly' }, chat: { questions: ['ตรวจเห็บที่ตัวเห็นไหม?', 'ป้องกันเห็บด้วยอะไรบ้าง?'], answers: ['เห็นเห็บตัวใหญ่ที่ตัวเลยครับ', 'ไม่ได้ป้องกันเลยครับ'] }, correct: { diag: 'E. canis (Blood Parasite)', treat: 'Doxycycline' } },
-                { id: 'choco', name: 'Chocolate Toxicity', scenario: "อาเจียน ท้องเสีย หัวใจเต้นเร็ว กระสับกระส่าย หลังกินช็อคโกแลต", symptoms: { ga: 'Agitated, Hyperactive', vitals: 'T 40.2, HR 200 (Tachyarrhythmia)', abdomen: 'Normal', heart_lung: 'Cardiac arrhythmia' }, lab: { cbc: 'Normal', chem: 'Electrolyte imbalance', ua: 'Normal' }, imaging: { xray: 'Normal', ultra: 'Normal' }, chat: { questions: ['กินช็อคโกแลตอะไร?', 'กินไปกี่ชั่วโมงแล้ว?'], answers: ['กินดาร์กช็อคโกแลตครึ่งแท่งเลยครับ', 'ประมาณ 2 ชั่วโมงที่แล้วครับ'] }, correct: { diag: 'Chocolate Toxicity', treat: 'Induce Vomiting + Activated Charcoal' } },
-                { id: 'heatstroke', name: 'Heat Stroke', scenario: "ล้มพับ หอบแรง น้ำลายไหลเยอะ ตัวร้อนจัดหลังออกกำลังกายกลางแจ้ง", symptoms: { ga: 'Collapsed, Dull, Excessive salivation', vitals: 'T 42.0 (Severe Hyperthermia), HR 200', abdomen: 'Normal', heart_lung: 'Rapid panting' }, lab: { cbc: 'Hemoconcentration, DIC signs', chem: 'Elevated ALT/AST, AKI pattern', ua: 'Myoglobinuria' }, imaging: { xray: 'Normal', ultra: 'Normal' }, chat: { questions: ['อยู่กลางแดดนานแค่ไหน?', 'มีน้ำให้ดื่มไหม?'], answers: ['วิ่งกลางสนามประมาณ 2 ชั่วโมงครับ', 'ลืมเอาน้ำไปให้เลยครับ'] }, correct: { diag: 'Heat Stroke', treat: 'Active Cooling + Oxygen' } },
-                { id: 'dm', name: 'Diabetes Mellitus', scenario: "กินน้ำเยอะมาก ฉี่บ่อย น้ำหนักลด ตาขุ่น มองไม่ชัด", symptoms: { ga: 'Thin body condition, Bilateral cataracts', vitals: 'T 38.5, HR 100', abdomen: 'Hepatomegaly', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Blood Glucose >400 mg/dL', ua: 'Glucosuria, Ketonuria' }, imaging: { xray: 'Hepatomegaly', ultra: 'Hepatic lipidosis pattern' }, chat: { questions: ['กินน้ำมากผิดปกติไหม?', 'น้ำหนักลดมานานแค่ไหน?'], answers: ['กินน้ำทีละเยอะมากเลยครับ', 'ผอมลงประมาณ 2 เดือนแล้วครับ'] }, correct: { diag: 'Diabetes Mellitus', treat: 'Insulin Therapy' } },
-                { id: 'ckd', name: 'Chronic Kidney Disease', scenario: "เบื่ออาหาร อาเจียน ซึม ปากเหม็น ผอมลงมาก กินน้ำเยอะ", symptoms: { ga: 'Thin, Pale mucous membranes, Uremic breath', vitals: 'T 37.5, HR 90', abdomen: 'Small irregular kidneys palpable', heart_lung: 'Normal' }, lab: { cbc: 'Non-regenerative Anemia', chem: 'High BUN/Creatinine, Hyperphosphatemia', ua: 'Isosthenuria (USG 1.012), Proteinuria' }, imaging: { xray: 'Small kidneys bilaterally', ultra: 'Small irregular hyperechoic kidneys' }, chat: { questions: ['ปากเหม็นมานานไหม?', 'ฉี่สีปกติไหม?'], answers: ['ปากเหม็นมาหลายเดือนแล้วครับ', 'ฉี่ใสมากเลยครับ สีอ่อนมาก'] }, correct: { diag: 'Chronic Kidney Disease', treat: 'Fluid Therapy + Kidney Diet' } },
-                { id: 'lepto', name: 'Leptospirosis', scenario: "มีไข้สูง ตาเหลือง อาเจียน ปัสสาวะน้อยลง ปวดกล้ามเนื้อ หลังลุยน้ำท่วม", symptoms: { ga: 'Jaundiced, Painful to touch', vitals: 'T 40.5, HR 150', abdomen: 'Hepatomegaly + Renomegaly', heart_lung: 'Normal' }, lab: { cbc: 'Leukocytosis, Thrombocytopenia', chem: 'High BUN/Creatinine + Elevated Bilirubin', ua: 'Bilirubinuria, Hematuria' }, imaging: { xray: 'Normal', ultra: 'Enlarged kidneys, hyperechoic cortex' }, chat: { questions: ['ไปลุยน้ำมาไหม?', 'ออกไปนอกบ้านบ่อยไหม?'], answers: ['ลุยน้ำท่วมหน้าบ้านมา 2 วันแล้วครับ', 'ออกไปทุกวันเลยครับ'] }, correct: { diag: 'Leptospirosis', treat: 'Antibiotics (Penicillin/Doxy) + Dialysis' } },
-                { id: 'kennel', name: 'Kennel Cough', scenario: "ไอแห้งเสียงดัง บางทีอาเจียนหลังไอ หลังกลับจากโรงแรมสัตว์เลี้ยง", symptoms: { ga: 'Alert, Active', vitals: 'T 38.7, HR 100', abdomen: 'Normal', heart_lung: 'Tracheal sensitivity on palpation' }, lab: { cbc: 'Mild Leukocytosis', chem: 'Normal', ua: '-' }, imaging: { xray: 'Mild bronchointerstitial pattern', ultra: 'Normal' }, chat: { questions: ['เพิ่งไปฝากเลี้ยงมาไหม?', 'ไอแล้วมีอะไรออกมาไหม?'], answers: ['กลับจากโรงแรมสัตว์เลี้ยงเมื่อ 3 วันก่อนครับ', 'บางทีมีเสมหะเล็กน้อยออกมาครับ'] }, correct: { diag: 'Kennel Cough', treat: 'Cough Suppressants + Doxycycline' } },
-                { id: 'demodex', name: 'Demodicosis', scenario: "ขนร่วงเป็นหย่อมๆ รอบตาและขา ผิวหนังแดง มีสะเก็ด ไม่ค่อยคัน", symptoms: { ga: 'Multifocal alopecia, Erythema, Comedones', vitals: 'T 38.5, HR 90', abdomen: 'Normal', heart_lung: 'Normal' }, lab: { cbc: 'Normal', chem: 'Normal', ua: '-' }, imaging: { xray: 'Normal', ultra: 'Normal' }, chat: { questions: ['ขนร่วงมานานแค่ไหน?', 'คันมากไหม?'], answers: ['ร่วงมาประมาณเดือนกว่าแล้วครับ', 'ไม่ค่อยเกาเลยครับ ไม่คันมาก'] }, correct: { diag: 'Demodicosis', treat: 'Isoxazoline (Nexgard/Bravecto)' } }
+                {
+                    id: 'parvo', name: 'Parvovirus',
+                    // 👁 ผู้เล่นเห็น: คลุมเครือ
+                    cc_display: 'ซึม อาเจียน ท้องเสีย ไม่กินข้าวหลายวัน',
+                    // 🤖 AI รู้: ข้อมูลครบ
+                    cc_full:    'อาเจียนเป็นเลือด ถ่ายเหลวเหม็นคาวรุนแรง ซึมมาก',
+                    symptoms: { ga: 'Severe dehydration (8%), Lethargic', vitals: 'High Fever (T 40.5), HR 160', abdomen: 'Fluid filled loops', heart_lung: 'Normal' },
+                    lab: { cbc: 'Severe Leukopenia (WBC 2,000)', chem: 'Hypoglycemia', ua: '-' },
+                    imaging: { xray: 'Gas filled intestinal loops', ultra: 'Thickened intestinal wall' },
+                    chat: { questions: ['ถ่ายเป็นยังไง?', 'อาเจียนบ่อยไหม?'], answers: ['ถ่ายเป็นเลือดสด เหม็นมากครับ', 'อาเจียนเกือบตลอดเวลาครับ'] },
+                    correct: { diag: 'Parvovirus', treat: 'Supportive Care (Fluids/Antibiotics)' }
+                },
+                {
+                    id: 'fb', name: 'Gastric Foreign Body',
+                    cc_display: 'อาเจียน ไม่กินข้าว ถ่ายน้อยลง',
+                    cc_full:    'อาเจียนทุกครั้งหลังกินอาหาร ซึม ถ่ายอุจจาระน้อยลงมาก',
+                    symptoms: { ga: 'Alert but painful', vitals: 'T 38.5, HR 120', abdomen: 'Painful cranial abdomen', heart_lung: 'Normal' },
+                    lab: { cbc: 'Normal', chem: 'Mild Hypokalemia', ua: '-' },
+                    imaging: { xray: 'Radiopaque object in stomach', ultra: 'Acoustic shadowing in stomach' },
+                    chat: { questions: ['ไปกินอะไรผิดสำแดงมา?', 'อ้วกหลังกินข้าวนานไหม?'], answers: ['ไม่รู้เลย แต่เห็นชอบเอาผ้าไปเล่น', 'อ้วกแทบจะทันทีหลังกินครับ'] },
+                    correct: { diag: 'Gastric Foreign Body', treat: 'Surgery (Gastrotomy)' }
+                },
+                {
+                    id: 'pyo', name: 'Pyometra (Closed)', fixedSex: 'Female',
+                    cc_display: 'ซึม กินน้ำเยอะผิดปกติ ท้องดูโตขึ้น',
+                    cc_full:    'ซึม กินน้ำเยอะ ฉี่เยอะ ท้องกาง มีไข้ ไม่กินอาหาร',
+                    symptoms: { ga: 'Depressed, Dehydrated', vitals: 'T 39.5, HR 140', abdomen: 'Distended, Painful', heart_lung: 'Normal' },
+                    lab: { cbc: 'High WBC (Neutrophilia)', chem: 'High BUN/Creatinine (Azotemia)', ua: '-' },
+                    imaging: { xray: 'Tubular soft tissue density in abdomen', ultra: 'Fluid filled uterus (Hypoechoic)' },
+                    chat: { questions: ['ทำหมันหรือยัง?', 'กินน้ำเยอะผิดปกติไหม?'], answers: ['ยังไม่ทำครับ', 'กินน้ำเยอะมาก ฉี่บ่อยมากครับ'] },
+                    correct: { diag: 'Pyometra', treat: 'Surgery (OHE) + Fluids' }
+                },
+                {
+                    id: 'stone', name: 'Cystic Calculi',
+                    cc_display: 'ฉี่ลำบาก ร้องเจ็บ ฉี่บ่อยแต่ออกน้อย',
+                    cc_full:    'ฉี่กะปริดกะปรอย มีเลือดปนในปัสสาวะ ร้องเจ็บขณะฉี่',
+                    symptoms: { ga: 'Normal', vitals: 'Normal', abdomen: 'Palpable hard mass in bladder', heart_lung: 'Normal' },
+                    lab: { cbc: 'Normal', chem: 'Normal', ua: 'Hematuria, Crystals found' },
+                    imaging: { xray: 'Radiopaque stones in bladder', ultra: 'Hyperechoic stones with shadowing' },
+                    chat: { questions: ['ฉี่ลำบากไหม?', 'ฉี่มีเลือดปนไหม?'], answers: ['เบ่งนานมากครับกว่าจะออก', 'มีเลือดหยดๆ ปนออกมาครับ'] },
+                    correct: { diag: 'Cystic Calculi', treat: 'Surgery (Cystotomy)' }
+                },
+                {
+                    id: 'heartworm', name: 'Heartworm Disease',
+                    cc_display: 'ไอบ่อย เหนื่อยง่าย ผอมลงเรื่อยๆ',
+                    cc_full:    'ไอแห้งเรื้อรัง เหนื่อยง่ายมาก ท้องมาน น้ำหนักลดมาก',
+                    symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' },
+                    lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' },
+                    imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' },
+                    chat: { questions: ['ป้องกันพยาธิหัวใจไหม?', 'ไอตอนไหนเป็นพิเศษ?'], answers: ['ไม่เคยป้องกันเลยครับ', 'ไอแห้งๆ ตลอดเวลาครับ'] },
+                    correct: { diag: 'Heartworm Disease', treat: 'Adulticide Treatment' }
+                },
+                {
+                    id: 'pancreatitis', name: 'Pancreatitis',
+                    cc_display: 'อาเจียน ไม่กินข้าว ดูเจ็บปวดมาก',
+                    cc_full:    'ปวดท้องรุนแรง อาเจียนบ่อย ไม่กินอาหาร หลังกินอาหารมันๆ',
+                    symptoms: { ga: 'Painful, hunched posture (Prayer position)', vitals: 'T 39.5, HR 130', abdomen: 'Severe cranial abdominal pain', heart_lung: 'Normal' },
+                    lab: { cbc: 'Mild Leukocytosis', chem: 'High Lipase/Amylase, Hyperlipidemia', ua: '-' },
+                    imaging: { xray: 'Ground glass opacity cranial abdomen', ultra: 'Hyperechoic pancreas + peripancreatic fluid' },
+                    chat: { questions: ['กินอาหารอะไรมาก่อนไหม?', 'อาเจียนบ่อยแค่ไหน?'], answers: ['กินหมูทอดเยอะมากเลยครับเมื่อคืน', 'อาเจียนทุก 30 นาทีเลยครับ'] },
+                    correct: { diag: 'Pancreatitis', treat: 'Fluid Therapy + Pain Management' }
+                },
+                {
+                    id: 'gdv', name: 'GDV',
+                    cc_display: 'ท้องโต หายใจเร็ว ซึมมาก เรอไม่ออก',
+                    cc_full:    'ท้องโตอย่างรวดเร็วภายในชั่วโมง เรอไม่ออก ซึมมาก หายใจลำบาก',
+                    symptoms: { ga: 'Severely distressed, Tachycardia', vitals: 'T 38.0 (Shock), HR 180', abdomen: 'Tympanic, grossly distended', heart_lung: 'Rapid shallow breathing' },
+                    lab: { cbc: 'Stress leukogram', chem: 'Elevated Lactate, Electrolyte imbalance', ua: '-' },
+                    imaging: { xray: 'Double bubble sign (Compartmentalized gas)', ultra: 'Gastric torsion, reduced wall motility' },
+                    chat: { questions: ['ออกกำลังหลังกินข้าวเลยไหม?', 'ท้องโตเร็วแค่ไหน?'], answers: ['วิ่งเล่นทันทีหลังกินข้าวเลยครับ', 'ภายในชั่วโมงเดียวเลยครับ'] },
+                    correct: { diag: 'Gastric Dilatation-Volvulus (GDV)', treat: 'Emergency Surgery (Gastropexy)' }
+                },
+                {
+                    id: 'ecainis', name: 'Ehrlichia canis',
+                    cc_display: 'ซึม มีไข้ ไม่กินข้าว มีจุดแดงตามตัว',
+                    cc_full:    'ซึม มีไข้สูง เบื่ออาหาร มีจุดเลือดออกตามผิวหนัง น้ำหนักลดมาก',
+                    symptoms: { ga: 'Depressed, Pale mucous membranes, Petechiae', vitals: 'T 40.0, HR 140', abdomen: 'Mild splenomegaly', heart_lung: 'Normal' },
+                    lab: { cbc: 'Severe Thrombocytopenia, Anemia', chem: 'High Globulin, ALT elevated', ua: 'Proteinuria' },
+                    imaging: { xray: 'Normal', ultra: 'Splenomegaly' },
+                    chat: { questions: ['ตรวจเห็บที่ตัวเห็นไหม?', 'ป้องกันเห็บด้วยอะไรบ้าง?'], answers: ['เห็นเห็บตัวใหญ่ที่ตัวเลยครับ', 'ไม่ได้ป้องกันเลยครับ'] },
+                    correct: { diag: 'E. canis (Blood Parasite)', treat: 'Doxycycline' }
+                },
+                {
+                    id: 'choco', name: 'Chocolate Toxicity',
+                    cc_display: 'กระสับกระส่าย อาเจียน ดูผิดปกติมาก',
+                    cc_full:    'อาเจียน ท้องเสีย หัวใจเต้นเร็วมาก กระสับกระส่าย หลังกินช็อคโกแลต',
+                    symptoms: { ga: 'Agitated, Hyperactive', vitals: 'T 40.2, HR 200 (Tachyarrhythmia)', abdomen: 'Normal', heart_lung: 'Cardiac arrhythmia' },
+                    lab: { cbc: 'Normal', chem: 'Electrolyte imbalance', ua: 'Normal' },
+                    imaging: { xray: 'Normal', ultra: 'Normal' },
+                    chat: { questions: ['กินช็อคโกแลตอะไร?', 'กินไปกี่ชั่วโมงแล้ว?'], answers: ['กินดาร์กช็อคโกแลตครึ่งแท่งเลยครับ', 'ประมาณ 2 ชั่วโมงที่แล้วครับ'] },
+                    correct: { diag: 'Chocolate Toxicity', treat: 'Induce Vomiting + Activated Charcoal' }
+                },
+                {
+                    id: 'heatstroke', name: 'Heat Stroke',
+                    cc_display: 'ล้มพับ หอบ ตัวร้อนมาก หลังออกกำลังกาย',
+                    cc_full:    'ล้มพับกะทันหัน หอบแรงมาก น้ำลายไหลเยอะ ตัวร้อนจัดหลังออกกำลังกายกลางแจ้ง',
+                    symptoms: { ga: 'Collapsed, Dull, Excessive salivation', vitals: 'T 42.0 (Severe Hyperthermia), HR 200', abdomen: 'Normal', heart_lung: 'Rapid panting' },
+                    lab: { cbc: 'Hemoconcentration, DIC signs', chem: 'Elevated ALT/AST, AKI pattern', ua: 'Myoglobinuria' },
+                    imaging: { xray: 'Normal', ultra: 'Normal' },
+                    chat: { questions: ['อยู่กลางแดดนานแค่ไหน?', 'มีน้ำให้ดื่มไหม?'], answers: ['วิ่งกลางสนามประมาณ 2 ชั่วโมงครับ', 'ลืมเอาน้ำไปให้เลยครับ'] },
+                    correct: { diag: 'Heat Stroke', treat: 'Active Cooling + Oxygen' }
+                },
+                {
+                    id: 'dm', name: 'Diabetes Mellitus',
+                    cc_display: 'กินน้ำเยอะ ฉี่บ่อย ผอมลงเรื่อยๆ',
+                    cc_full:    'กินน้ำเยอะผิดปกติมาก ฉี่บ่อย น้ำหนักลดมาก ตาขุ่นทั้งสองข้าง',
+                    symptoms: { ga: 'Thin body condition, Bilateral cataracts', vitals: 'T 38.5, HR 100', abdomen: 'Hepatomegaly', heart_lung: 'Normal' },
+                    lab: { cbc: 'Normal', chem: 'Blood Glucose >400 mg/dL', ua: 'Glucosuria, Ketonuria' },
+                    imaging: { xray: 'Hepatomegaly', ultra: 'Hepatic lipidosis pattern' },
+                    chat: { questions: ['กินน้ำมากผิดปกติไหม?', 'น้ำหนักลดมานานแค่ไหน?'], answers: ['กินน้ำทีละเยอะมากเลยครับ', 'ผอมลงประมาณ 2 เดือนแล้วครับ'] },
+                    correct: { diag: 'Diabetes Mellitus', treat: 'Insulin Therapy' }
+                },
+                {
+                    id: 'ckd', name: 'Chronic Kidney Disease',
+                    cc_display: 'เบื่ออาหาร อาเจียน ซึม ผอมลงมาก',
+                    cc_full:    'เบื่ออาหารมาก อาเจียนบ่อย ซึม ปากเหม็นผิดปกติ ผอมลงมาก กินน้ำเยอะ',
+                    symptoms: { ga: 'Thin, Pale mucous membranes, Uremic breath', vitals: 'T 37.5, HR 90', abdomen: 'Small irregular kidneys palpable', heart_lung: 'Normal' },
+                    lab: { cbc: 'Non-regenerative Anemia', chem: 'High BUN/Creatinine, Hyperphosphatemia', ua: 'Isosthenuria (USG 1.012), Proteinuria' },
+                    imaging: { xray: 'Small kidneys bilaterally', ultra: 'Small irregular hyperechoic kidneys' },
+                    chat: { questions: ['ปากเหม็นมานานไหม?', 'ฉี่สีปกติไหม?'], answers: ['ปากเหม็นมาหลายเดือนแล้วครับ', 'ฉี่ใสมากเลยครับ สีอ่อนมาก'] },
+                    correct: { diag: 'Chronic Kidney Disease', treat: 'Fluid Therapy + Kidney Diet' }
+                },
+                {
+                    id: 'lepto', name: 'Leptospirosis',
+                    cc_display: 'มีไข้ ตาเหลืองนิดหน่อย อาเจียน ดูเจ็บตัว',
+                    cc_full:    'มีไข้สูง ตาเหลือง อาเจียน ปัสสาวะน้อยลงมาก ปวดกล้ามเนื้อ หลังลุยน้ำท่วม',
+                    symptoms: { ga: 'Jaundiced, Painful to touch', vitals: 'T 40.5, HR 150', abdomen: 'Hepatomegaly + Renomegaly', heart_lung: 'Normal' },
+                    lab: { cbc: 'Leukocytosis, Thrombocytopenia', chem: 'High BUN/Creatinine + Elevated Bilirubin', ua: 'Bilirubinuria, Hematuria' },
+                    imaging: { xray: 'Normal', ultra: 'Enlarged kidneys, hyperechoic cortex' },
+                    chat: { questions: ['ไปลุยน้ำมาไหม?', 'ออกไปนอกบ้านบ่อยไหม?'], answers: ['ลุยน้ำท่วมหน้าบ้านมา 2 วันแล้วครับ', 'ออกไปทุกวันเลยครับ'] },
+                    correct: { diag: 'Leptospirosis', treat: 'Antibiotics (Penicillin/Doxy) + Dialysis' }
+                },
+                {
+                    id: 'kennel', name: 'Kennel Cough',
+                    cc_display: 'ไอบ่อย บางทีอาเจียนหลังไอ',
+                    cc_full:    'ไอแห้งเสียงดังเหมือนห่าน บางทีอาเจียนหลังไอ หลังกลับจากโรงแรมสัตว์เลี้ยง',
+                    symptoms: { ga: 'Alert, Active', vitals: 'T 38.7, HR 100', abdomen: 'Normal', heart_lung: 'Tracheal sensitivity on palpation' },
+                    lab: { cbc: 'Mild Leukocytosis', chem: 'Normal', ua: '-' },
+                    imaging: { xray: 'Mild bronchointerstitial pattern', ultra: 'Normal' },
+                    chat: { questions: ['เพิ่งไปฝากเลี้ยงมาไหม?', 'ไอแล้วมีอะไรออกมาไหม?'], answers: ['กลับจากโรงแรมสัตว์เลี้ยงเมื่อ 3 วันก่อนครับ', 'บางทีมีเสมหะเล็กน้อยออกมาครับ'] },
+                    correct: { diag: 'Kennel Cough', treat: 'Cough Suppressants + Doxycycline' }
+                },
+                {
+                    id: 'demodex', name: 'Demodicosis',
+                    cc_display: 'ขนร่วงเป็นหย่อมๆ ผิวหนังแดง ดูผิดปกติ',
+                    cc_full:    'ขนร่วงเป็นหย่อมๆ รอบตาและขา ผิวหนังแดง มีสะเก็ด ไม่ค่อยคัน',
+                    symptoms: { ga: 'Multifocal alopecia, Erythema, Comedones', vitals: 'T 38.5, HR 90', abdomen: 'Normal', heart_lung: 'Normal' },
+                    lab: { cbc: 'Normal', chem: 'Normal', ua: '-' },
+                    imaging: { xray: 'Normal', ultra: 'Normal' },
+                    chat: { questions: ['ขนร่วงมานานแค่ไหน?', 'คันมากไหม?'], answers: ['ร่วงมาประมาณเดือนกว่าแล้วครับ', 'ไม่ค่อยเกาเลยครับ ไม่คันมาก'] },
+                    correct: { diag: 'Demodicosis', treat: 'Isoxazoline (Nexgard/Bravecto)' }
+                }
             ],
-            diagnosisList: ['Parvovirus', 'Gastric Foreign Body', 'Pyometra', 'Cystic Calculi', 'Heartworm Disease', 'E. canis (Blood Parasite)', 'Demodicosis', 'Chocolate Toxicity', 'Gastric Dilatation-Volvulus (GDV)', 'Pancreatitis', 'Chronic Kidney Disease', 'Diabetes Mellitus', 'Hypothyroidism', 'Kennel Cough', 'Mast Cell Tumor', 'Patellar Luxation', 'Hip Dysplasia', 'Heat Stroke', 'Leptospirosis', 'Cherry Eye'],
-            treatmentList: ['Supportive Care (Fluids/Antibiotics)', 'Surgery (Gastrotomy)', 'Surgery (OHE) + Fluids', 'Surgery (Cystotomy)', 'Adulticide Treatment', 'Doxycycline', 'Isoxazoline (Nexgard/Bravecto)', 'Induce Vomiting + Activated Charcoal', 'Emergency Surgery (Gastropexy)', 'Fluid Therapy + Pain Management', 'Fluid Therapy + Kidney Diet', 'Insulin Therapy', 'Levothyroxine', 'Cough Suppressants + Doxycycline', 'Surgery + Histopathology', 'Surgery (Sulcoplasty)', 'Weight Control + NSAIDs', 'Active Cooling + Oxygen', 'Antibiotics (Penicillin/Doxy) + Dialysis', 'Surgery (Pocket Technique)']
+            diagnosisList: ['Parvovirus','Gastric Foreign Body','Pyometra','Cystic Calculi','Heartworm Disease','E. canis (Blood Parasite)','Demodicosis','Chocolate Toxicity','Gastric Dilatation-Volvulus (GDV)','Pancreatitis','Chronic Kidney Disease','Diabetes Mellitus','Hypothyroidism','Kennel Cough','Mast Cell Tumor','Patellar Luxation','Hip Dysplasia','Heat Stroke','Leptospirosis','Cherry Eye'],
+            treatmentList: ['Supportive Care (Fluids/Antibiotics)','Surgery (Gastrotomy)','Surgery (OHE) + Fluids','Surgery (Cystotomy)','Adulticide Treatment','Doxycycline','Isoxazoline (Nexgard/Bravecto)','Induce Vomiting + Activated Charcoal','Emergency Surgery (Gastropexy)','Fluid Therapy + Pain Management','Fluid Therapy + Kidney Diet','Insulin Therapy','Levothyroxine','Cough Suppressants + Doxycycline','Surgery + Histopathology','Surgery (Sulcoplasty)','Weight Control + NSAIDs','Active Cooling + Oxygen','Antibiotics (Penicillin/Doxy) + Dialysis','Surgery (Pocket Technique)']
         };
 
-        // GENERATOR
         class CaseGenerator {
             static generate(level = 1) {
                 const disease = CASE_DATA.diseases[Math.floor(Math.random() * CASE_DATA.diseases.length)];
@@ -455,7 +574,6 @@
                 const age = Math.floor(Math.random() * 9) + 1;
                 const weight = (Math.random() * 25 + 3).toFixed(1);
                 const gender = disease.fixedSex || (Math.random() > 0.5 ? 'Male' : 'Female');
-
                 let numOpts = 3; if(level >= 3) numOpts = 5; if(level >= 6) numOpts = 20;
 
                 const diagOptions = this.getWeightedOptions(disease.correct.diag, CASE_DATA.diagnosisList, numOpts);
@@ -467,36 +585,38 @@
                     { plea: 'ช่วยด้วยครับ! น้องหมาของผม', tone: 'ร้อนรน อยากให้รีบรักษา (Impatient)' },
                     { plea: 'หมอคะ ช่วยด้วย! สุนัขของหนู', tone: 'เสียใจ ร้องไห้ (Sad)' }
                 ];
-                
                 const selectedOwner = owners[Math.floor(Math.random() * owners.length)];
-                const narrative = `"${selectedOwner.plea} ${disease.scenario}..."`;
+
+                // ✅ narrative ใช้ cc_display (คลุมเครือ) — ผู้เล่นเห็นตอน Intro Modal
+                const narrative = `"${selectedOwner.plea} ${disease.cc_display}..."`;
 
                 return {
                     id: Date.now(),
-                    name: name,
+                    name,
                     img: breed.img,
-                    scenario: narrative, 
-                    cc: disease.scenario, 
+                    scenario: narrative,           // Intro Modal → cc_display
+                    cc_display: disease.cc_display,
+                    cc_full: disease.cc_full,      // ส่งให้ AI เท่านั้น
                     owner: selectedOwner,
-                    info: { signalment: `${breed.name}, ${age}Y, ${gender}`, cc: disease.scenario, weight: weight },
-                    history: { underlying: 'None', meds: 'None', procedures: ['Annual Vaccine 1y ago'] },
+                    info: {
+                        signalment: `${breed.name}, ${age}Y, ${gender}`,
+                        cc: disease.cc_display,    // ✅ History หน้าจอ → cc_display
+                        weight
+                    },
+                    history: { underlying: 'None', meds: 'None' },
                     results: { physical: disease.symptoms, lab: disease.lab, imaging: disease.imaging },
-                    chat: { default: 'หมอช่วยหน่อยนะครับ เป็นห่วงน้องมาก', qa_pairs: disease.chat.questions.map((q, i) => ({ question: q, answer: disease.chat.answers[i] })), keywords: {} },
+                    chat: { qa_pairs: disease.chat.questions.map((q, i) => ({ question: q, answer: disease.chat.answers[i] })) },
                     correct: { diag: disease.correct.diag, treat: disease.correct.treat, options: { d: diagOptions.sort(), t: treatOptions.sort() } }
                 };
             }
 
             static getWeightedOptions(correct, allOptions, count) {
                 if (count >= allOptions.length) return allOptions;
-                const others = allOptions.filter(o => o !== correct);
-                const shuffled = others.sort(() => 0.5 - Math.random());
-                const selected = shuffled.slice(0, count - 1);
-                selected.push(correct);
-                return selected;
+                const others = allOptions.filter(o => o !== correct).sort(() => 0.5 - Math.random());
+                return [...others.slice(0, count - 1), correct];
             }
         }
 
-        // STATE
         const AppState = {
             vetName: 'Vet Student',
             currentCase: null,
@@ -508,59 +628,45 @@
 
             registerUser() {
                 const nameInput = document.getElementById('vet-name-input').value.trim();
-                if (nameInput) {
-                    this.vetName = nameInput;
-                    document.getElementById('register-modal').classList.add('hidden');
-                    document.getElementById('tutorial-modal').classList.remove('hidden');
-                } else { alert('กรุณาตั้งชื่อเพื่อเล่นเกม'); }
+                if (!nameInput) { alert('กรุณาตั้งชื่อเพื่อเล่นเกม'); return; }
+                this.vetName = nameInput;
+                document.getElementById('register-modal').classList.add('hidden');
+                document.getElementById('tutorial-modal').classList.remove('hidden');
             },
-            setCurrentCase(caseData) { this.currentCase = caseData; },
+            setCurrentCase(c) { this.currentCase = c; },
             addWin() {
                 this.casesSolvedInLevel++;
                 this.totalCasesSolved++;
-                const required = this.getCasesRequiredForNextLevel();
+                const required = this.currentLevel + 1;
                 let leveledUp = false;
-                if (this.casesSolvedInLevel >= required) {
-                    this.currentLevel++;
-                    this.casesSolvedInLevel = 0;
-                    leveledUp = true;
-                }
-                if(window.FirebaseApp) window.FirebaseApp.saveProgress(this.vetName, this.currentLevel, this.totalCasesSolved);
+                if (this.casesSolvedInLevel >= required) { this.currentLevel++; this.casesSolvedInLevel = 0; leveledUp = true; }
+                if (window.FirebaseApp) window.FirebaseApp.saveProgress(this.vetName, this.currentLevel, this.totalCasesSolved);
                 this.updateLevelUI();
                 return leveledUp;
             },
-            getCasesRequiredForNextLevel() { return this.currentLevel + 1; },
             updateLevelUI() {
                 document.getElementById('level-num').innerText = this.currentLevel;
-                const required = this.getCasesRequiredForNextLevel();
-                const percentage = (this.casesSolvedInLevel / required) * 100;
-                document.getElementById('level-progress-bar').style.width = `${percentage}%`;
+                const required = this.currentLevel + 1;
+                document.getElementById('level-progress-bar').style.width = `${(this.casesSolvedInLevel / required) * 100}%`;
                 document.getElementById('level-progress-text').innerText = `${this.casesSolvedInLevel}/${required} Wins`;
-                
-                const levelContainer = document.getElementById('level-container');
-                if (this.currentLevel >= 6) levelContainer.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-gold";
-                else if (this.currentLevel >= 3) levelContainer.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-silver";
-                else levelContainer.className = "flex items-center bg-slate-100 rounded-full border border-slate-200 p-1 pl-3 pr-2 gap-2";
+                const lc = document.getElementById('level-container');
+                if (this.currentLevel >= 6) lc.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-gold";
+                else if (this.currentLevel >= 3) lc.className = "flex items-center rounded-full p-1 pl-3 pr-2 gap-2 level-badge-silver";
+                else lc.className = "flex items-center bg-slate-100 rounded-full border border-slate-200 p-1 pl-3 pr-2 gap-2";
             },
             toggleChat() { this.isChatOpen = !this.isChatOpen; return this.isChatOpen; },
-            setTimerInterval(interval) { this.timerInterval = interval; },
+            setTimerInterval(i) { this.timerInterval = i; },
             clearTimer() { if (this.timerInterval) { clearInterval(this.timerInterval); this.timerInterval = null; } }
         };
 
-        // UI MODULES
         const Navigation = {
-            showSection(sectionId) {
-                document.querySelectorAll('.nav-item-mobile').forEach(btn => { btn.classList.remove('active', 'text-teal-600'); btn.classList.add('text-slate-400'); });
-                const mobileBtn = document.getElementById(`nav-m-${sectionId}`);
-                if (mobileBtn) { mobileBtn.classList.add('active', 'text-teal-600'); mobileBtn.classList.remove('text-slate-400'); }
-                
-                document.querySelectorAll('.nav-item-desktop').forEach(btn => btn.classList.remove('active'));
-                const desktopBtn = document.getElementById(`nav-d-${sectionId}`);
-                if (desktopBtn) desktopBtn.classList.add('active');
-
-                ['history', 'physical', 'lab', 'imaging', 'diagnosis'].forEach(s => {
-                    const el = document.getElementById(`section-${s}`);
-                    if (s === sectionId) el.classList.remove('hidden'); else el.classList.add('hidden');
+            showSection(id) {
+                document.querySelectorAll('.nav-item-mobile').forEach(b => { b.classList.remove('active','text-teal-600'); b.classList.add('text-slate-400'); });
+                const mb = document.getElementById(`nav-m-${id}`); if(mb) { mb.classList.add('active','text-teal-600'); mb.classList.remove('text-slate-400'); }
+                document.querySelectorAll('.nav-item-desktop').forEach(b => b.classList.remove('active'));
+                const db = document.getElementById(`nav-d-${id}`); if(db) db.classList.add('active');
+                ['history','physical','lab','imaging','diagnosis'].forEach(s => {
+                    document.getElementById(`section-${s}`).classList.toggle('hidden', s !== id);
                 });
             }
         };
@@ -568,39 +674,36 @@
         const Examination = {
             perform(part) {
                 if (document.getElementById(`phys-res-${part}`)) return;
-                const result = AppState.currentCase.results.physical[part];
                 const div = document.createElement('div');
                 div.id = `phys-res-${part}`;
                 div.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-3 text-sm fade-in border-l-4 border-l-teal-500";
-                div.innerHTML = `<strong class="text-teal-700 block mb-1">${part.toUpperCase()}</strong>${result}`;
+                div.innerHTML = `<strong class="text-teal-700 block mb-1">${part.toUpperCase()}</strong>${AppState.currentCase.results.physical[part]}`;
                 document.getElementById('physical-results').prepend(div);
                 lucide.createIcons();
             }
         };
 
         const Laboratory = {
-            runTest(testType) {
-                if (document.getElementById(`lab-res-${testType}`)) return;
-                const result = AppState.currentCase.results.lab[testType];
+            runTest(type) {
+                if (document.getElementById(`lab-res-${type}`)) return;
                 const container = document.getElementById('lab-results');
                 if (container.innerText.includes('ยังไม่ได้ส่งตรวจ')) container.innerHTML = '';
                 const div = document.createElement('div');
-                div.id = `lab-res-${testType}`;
+                div.id = `lab-res-${type}`;
                 div.className = "bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-2 text-sm fade-in flex justify-between items-center";
-                div.innerHTML = `<strong class="text-slate-600">${testType.toUpperCase()}</strong><span class="text-slate-800 font-medium">${result}</span>`;
+                div.innerHTML = `<strong class="text-slate-600">${type.toUpperCase()}</strong><span class="text-slate-800 font-medium">${AppState.currentCase.results.lab[type]}</span>`;
                 container.appendChild(div);
                 lucide.createIcons();
             }
         };
 
         const Imaging = {
-            runStudy(studyType) {
-                if (document.getElementById(`img-res-${studyType}`)) return;
-                const result = AppState.currentCase.results.imaging[studyType];
+            runStudy(type) {
+                if (document.getElementById(`img-res-${type}`)) return;
                 const div = document.createElement('div');
-                div.id = `img-res-${studyType}`;
+                div.id = `img-res-${type}`;
                 div.className = "bg-slate-900 text-slate-300 p-4 rounded-xl text-xs font-mono border-l-4 border-teal-500 fade-in shadow-lg";
-                div.innerHTML = `<div class="text-teal-400 font-bold mb-1 uppercase tracking-widest text-[10px]">RADIOLOGY REPORT</div>${result}`;
+                div.innerHTML = `<div class="text-teal-400 font-bold mb-1 uppercase tracking-widest text-[10px]">RADIOLOGY REPORT</div>${AppState.currentCase.results.imaging[type]}`;
                 document.getElementById('imaging-results').appendChild(div);
                 lucide.createIcons();
             }
@@ -612,16 +715,17 @@
             toggle() {
                 const modal = document.getElementById('chat-modal');
                 const overlay = document.getElementById('chat-overlay');
-                const fabMobile = document.getElementById('chat-fab-mobile');
-                const fabDesktop = document.getElementById('chat-fab-desktop');
+                const fabM = document.getElementById('chat-fab-mobile');
+                const fabD = document.getElementById('chat-fab-desktop');
                 const isOpen = AppState.toggleChat();
-
                 if (isOpen) {
-                    modal.classList.remove('chat-closed'); modal.classList.add('chat-open'); overlay.classList.remove('hidden');
-                    if(fabMobile) fabMobile.classList.add('scale-0'); if(fabDesktop) fabDesktop.classList.add('scale-0');
+                    modal.classList.remove('chat-closed'); modal.classList.add('chat-open');
+                    overlay.classList.remove('hidden');
+                    if(fabM) fabM.classList.add('scale-0'); if(fabD) fabD.classList.add('scale-0');
                 } else {
-                    modal.classList.add('chat-closed'); modal.classList.remove('chat-open'); overlay.classList.add('hidden');
-                    if(fabMobile) fabMobile.classList.remove('scale-0'); if(fabDesktop) fabDesktop.classList.remove('scale-0');
+                    modal.classList.add('chat-closed'); modal.classList.remove('chat-open');
+                    overlay.classList.add('hidden');
+                    if(fabM) fabM.classList.remove('scale-0'); if(fabD) fabD.classList.remove('scale-0');
                 }
             },
 
@@ -630,10 +734,8 @@
                 const text = question || input.value.trim();
                 if (!text) return;
                 if (!question) input.value = '';
-                
                 this.addMessage('user', text);
                 this.showTyping();
-
                 try {
                     const response = await this.callWorker(text);
                     this.hideTyping();
@@ -641,69 +743,52 @@
                     this.updateAIStatus(true);
                 } catch (e) {
                     this.hideTyping();
-                    console.error("Worker call failed:", e);
-                    const fallbackResponse = this.getFallbackResponse(text);
-                    this.addMessage('ai', fallbackResponse);
+                    this.addMessage('ai', this.getFallbackResponse(text));
                     this.updateAIStatus(false);
                 }
             },
 
             async callWorker(userMessage) {
-                const caseData = AppState.currentCase;
+                const c = AppState.currentCase;
+
+                // ✅ ส่ง cc_full ให้ AI รู้ข้อมูลครบถ้วน แม้ผู้เล่นเห็นแค่ cc_display
                 const systemPrompt = `
-                    Roleplay as pet owner. Pet: ${caseData.name}, ${caseData.info.signalment}. 
-                    Tone: ${caseData.owner.tone}. Chief Complaint: ${caseData.cc}.
-                    User asks: "${userMessage}".
-                    Reply in Thai only. Short (1-2 sentences). Emotional. 
-                    History clues: ${caseData.history.underlying}, ${caseData.history.meds}.
-                    NEVER reveal diagnosis: ${caseData.correct.diag}.
-                    Output ONLY dialogue.
-                `;
+Roleplay as pet owner. Pet: ${c.name}, ${c.info.signalment}.
+Tone: ${c.owner.tone}. Chief Complaint: ${c.cc_full}.
+User asks: "${userMessage}".
+Reply in Thai only. Short (1-2 sentences). Emotional.
+History clues: ${c.history.underlying}, ${c.history.meds}.
+NEVER reveal diagnosis: ${c.correct.diag}.
+Output ONLY dialogue.`;
 
                 this.chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
-                const response = await fetch(WORKER_URL, {
+                const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [
-                            { role: "user", parts: [{ text: systemPrompt }] },
-                            ...this.chatHistory
-                        ]
-                    })
+                    body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: systemPrompt }] }, ...this.chatHistory] })
                 });
+                if (!res.ok) throw new Error(`Worker ${res.status}`);
 
-                if (!response.ok) throw new Error(`Worker error ${response.status}`);
-
-                const data = await response.json();
+                const data = await res.json();
                 const aiText = data.candidates[0].content.parts[0].text;
                 this.chatHistory.push({ role: "model", parts: [{ text: aiText }] });
                 return aiText;
             },
 
-            getFallbackResponse(message) {
-                const lowerMessage = message.toLowerCase();
-                const currentCase = AppState.currentCase;
-                const match = currentCase.chat.qa_pairs.find(pair => 
-                    lowerMessage.includes(pair.question.toLowerCase()) || 
-                    pair.question.toLowerCase().includes(lowerMessage)
-                );
+            getFallbackResponse(msg) {
+                const lower = msg.toLowerCase();
+                const match = AppState.currentCase.chat.qa_pairs.find(p => lower.includes(p.question.toLowerCase()) || p.question.toLowerCase().includes(lower));
                 if (match) return match.answer;
-                const generics = ["ไม่แน่ใจเลยอ่ะหมอ", "รีบช่วยน้องก่อนหมอ", "ไม่รู้อะไรเลย ช่วยน้องด้วยหมอ"];
-                if (lowerMessage.includes("ไหม") || lowerMessage.includes("หรือเปล่า")) {
-                    return Math.random() > 0.5 ? "ไม่แน่ใจครับหมอ" : "น่าจะใช่นะครับ";
-                }
-                return generics[Math.floor(Math.random() * generics.length)];
+                const generics = ["ไม่แน่ใจเลยอ่ะหมอ","รีบช่วยน้องก่อนหมอ","ไม่รู้อะไรเลย ช่วยน้องด้วยหมอ"];
+                return lower.includes("ไหม") || lower.includes("หรือเปล่า") ? "ไม่แน่ใจครับหมอ" : generics[Math.floor(Math.random()*3)];
             },
 
             addMessage(role, text) {
                 const container = document.getElementById('chat-container');
                 const div = document.createElement('div');
-                let msgClass = "";
-                if (role === 'user') msgClass = "bg-teal-600 text-white rounded-tr-none self-end";
-                else if (role === 'system') msgClass = "bg-red-100 text-red-700 border-red-200 self-center text-center w-full";
-                else msgClass = "bg-white border border-slate-200 text-slate-700 rounded-tl-none self-start";
-                div.className = `${msgClass} p-3 rounded-2xl text-sm max-w-[85%] shadow-sm fade-in`;
+                const cls = role === 'user' ? "bg-teal-600 text-white rounded-tr-none self-end" : "bg-white border border-slate-200 text-slate-700 rounded-tl-none self-start";
+                div.className = `${cls} p-3 rounded-2xl text-sm max-w-[85%] shadow-sm fade-in`;
                 div.innerText = text;
                 container.appendChild(div);
                 container.scrollTop = container.scrollHeight;
@@ -718,11 +803,7 @@
                 container.appendChild(div);
                 container.scrollTop = container.scrollHeight;
             },
-
-            hideTyping() {
-                const div = document.getElementById('typing-indicator');
-                if (div) div.remove();
-            },
+            hideTyping() { const d = document.getElementById('typing-indicator'); if(d) d.remove(); },
 
             setupSuggestions() {
                 const container = document.getElementById('chat-suggestions');
@@ -735,33 +816,33 @@
                     container.appendChild(btn);
                 });
             },
-            
             updateAIStatus(isActive) {
                 const dot = document.getElementById('ai-status-dot');
-                if(isActive) { dot.className = "absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-white animate-pulse"; }
-                else { dot.className = "absolute -top-1 -right-1 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white"; }
+                dot.className = isActive
+                    ? "absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-white animate-pulse"
+                    : "absolute -top-1 -right-1 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white";
             }
         };
 
         const TimerController = {
             start(seconds) {
                 this.stop();
-                let timeLeft = seconds;
-                this.update(timeLeft);
+                let t = seconds;
+                this.update(t);
                 const interval = setInterval(() => {
-                    timeLeft--;
-                    this.update(timeLeft);
-                    if (timeLeft <= 0) { this.stop(); document.getElementById('timeout-modal').classList.remove('hidden'); }
+                    t--;
+                    this.update(t);
+                    if (t <= 0) { this.stop(); document.getElementById('timeout-modal').classList.remove('hidden'); }
                 }, 1000);
                 AppState.setTimerInterval(interval);
             },
             stop() { AppState.clearTimer(); },
-            update(seconds) {
-                const m = Math.floor(seconds / 60); const s = seconds % 60;
-                const display = document.getElementById('timer-display'); const badge = document.getElementById('timer-badge');
-                display.innerText = `${m}:${s < 10 ? '0' + s : s}`;
-                if (seconds < 30) { badge.classList.remove('bg-slate-800'); badge.classList.add('bg-red-600', 'timer-low'); }
-                else { badge.classList.add('bg-slate-800'); badge.classList.remove('bg-red-600', 'timer-low'); }
+            update(s) {
+                const m = Math.floor(s/60), sec = s%60;
+                document.getElementById('timer-display').innerText = `${m}:${sec<10?'0'+sec:sec}`;
+                const badge = document.getElementById('timer-badge');
+                if (s < 30) { badge.classList.remove('bg-slate-800'); badge.classList.add('bg-red-600','timer-low'); }
+                else { badge.classList.add('bg-slate-800'); badge.classList.remove('bg-red-600','timer-low'); }
             }
         };
 
@@ -772,32 +853,32 @@
                 if (!diag || !treat) { alert('กรุณาเลือกการวินิจฉัยและการรักษา'); return; }
                 TimerController.stop();
                 const correct = (diag === AppState.currentCase.correct.diag && treat === AppState.currentCase.correct.treat);
-                
                 const modal = document.getElementById('score-modal');
                 const header = document.getElementById('result-header');
                 const icon = document.getElementById('result-icon-container');
                 const title = document.getElementById('result-title');
                 const desc = document.getElementById('result-desc');
                 const badge = document.getElementById('result-badge');
-                
                 if (correct) {
                     const leveledUp = AppState.addWin();
                     header.className = "bg-green-600 p-10 text-white text-center";
                     icon.innerHTML = '<div class="bg-white/20 p-4 rounded-full inline-block"><i data-lucide="check-circle" class="w-12 h-12 text-white"></i></div>';
                     title.innerText = "ถูกต้อง!";
                     if (leveledUp) {
-                         desc.innerHTML = `ยินดีด้วย! คุณเลื่อนขั้นเป็น <strong class="text-yellow-600">Level ${AppState.currentLevel}</strong>`;
-                         badge.innerHTML = '<i data-lucide="chevrons-up" class="w-3 h-3"></i> LEVEL UP!';
-                         badge.classList.remove('hidden', 'bg-red-500'); badge.classList.add('bg-yellow-500');
+                        desc.innerHTML = `ยินดีด้วย! เลื่อนขั้นเป็น <strong class="text-yellow-600">Level ${AppState.currentLevel}</strong>`;
+                        badge.innerHTML = '<i data-lucide="chevrons-up" class="w-3 h-3"></i> LEVEL UP!';
+                        badge.classList.remove('hidden','bg-red-500'); badge.classList.add('bg-yellow-500');
                     } else {
-                         desc.innerText = "วินิจฉัยและรักษาได้ถูกต้องแม่นยำ";
-                         badge.innerHTML = '<i data-lucide="thumbs-up" class="w-3 h-3"></i> Progress +1';
-                         badge.classList.remove('hidden');
+                        desc.innerText = "วินิจฉัยและรักษาได้ถูกต้องแม่นยำ";
+                        badge.innerHTML = '<i data-lucide="thumbs-up" class="w-3 h-3"></i> Progress +1';
+                        badge.classList.remove('hidden');
                     }
                 } else {
                     header.className = "bg-red-600 p-10 text-white text-center";
                     icon.innerHTML = '<div class="bg-white/20 p-4 rounded-full inline-block"><i data-lucide="x-circle" class="w-12 h-12 text-white"></i></div>';
-                    title.innerText = "ยังไม่ถูกต้อง"; desc.innerText = "ลองทบทวนผลตรวจใหม่อีกครั้ง"; badge.classList.add('hidden');
+                    title.innerText = "ยังไม่ถูกต้อง";
+                    desc.innerText = "ลองทบทวนผลตรวจใหม่อีกครั้ง";
+                    badge.classList.add('hidden');
                 }
                 document.getElementById('ans-diag').innerText = AppState.currentCase.correct.diag;
                 document.getElementById('ans-treat').innerText = AppState.currentCase.correct.treat;
@@ -812,14 +893,14 @@
                 const list = document.getElementById('leaderboard-list');
                 if (window.FirebaseApp) {
                     const data = await window.FirebaseApp.getLeaderboard();
-                    if (data.length === 0) { list.innerHTML = '<div class="text-center text-slate-400 mt-10">ยังไม่มีข้อมูลคะแนน</div>'; return; }
-                    list.innerHTML = data.map((user, index) => {
-                        let rankClass = "bg-slate-100 text-slate-500";
-                        if (index === 0) rankClass = "bg-yellow-100 text-yellow-700 font-bold border-yellow-200 border";
-                        if (index === 1) rankClass = "bg-slate-200 text-slate-600 font-bold border-slate-300 border";
-                        if (index === 2) rankClass = "bg-orange-100 text-orange-700 font-bold border-orange-200 border";
-                        let badge = "Intern"; if (user.level >= 3) badge = "Resident"; if (user.level >= 6) badge = "Specialist";
-                        return `<div class="flex items-center gap-3 bg-white p-3 rounded-xl mb-2 border border-slate-100 shadow-sm"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${rankClass}">${index + 1}</div><div class="flex-1"><div class="font-bold text-slate-700 text-sm">${user.name || 'Anonymous'}</div><div class="text-[10px] text-slate-400 uppercase font-bold">${badge} • ${user.totalCasesSolved || 0} Wins</div></div><div class="flex flex-col items-end"><span class="text-[9px] text-slate-400 font-bold uppercase">Level</span><span class="font-heading font-bold text-teal-600 text-xl leading-none">${user.level}</span></div></div>`;
+                    if (!data.length) { list.innerHTML = '<div class="text-center text-slate-400 mt-10">ยังไม่มีข้อมูลคะแนน</div>'; return; }
+                    list.innerHTML = data.map((u, i) => {
+                        let rc = "bg-slate-100 text-slate-500";
+                        if(i===0) rc="bg-yellow-100 text-yellow-700 font-bold border border-yellow-200";
+                        if(i===1) rc="bg-slate-200 text-slate-600 font-bold border border-slate-300";
+                        if(i===2) rc="bg-orange-100 text-orange-700 font-bold border border-orange-200";
+                        let badge = "Intern"; if(u.level>=3) badge="Resident"; if(u.level>=6) badge="Specialist";
+                        return `<div class="flex items-center gap-3 bg-white p-3 rounded-xl mb-2 border border-slate-100 shadow-sm"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${rc}">${i+1}</div><div class="flex-1"><div class="font-bold text-slate-700 text-sm">${u.name||'Anonymous'}</div><div class="text-[10px] text-slate-400 uppercase font-bold">${badge} • ${u.totalCasesSolved||0} Wins</div></div><div class="flex flex-col items-end"><span class="text-[9px] text-slate-400 font-bold uppercase">Level</span><span class="font-heading font-bold text-teal-600 text-xl leading-none">${u.level}</span></div></div>`;
                     }).join('');
                 } else { list.innerHTML = '<div class="text-center text-slate-400 mt-10">โหมดออฟไลน์</div>'; }
             },
@@ -827,72 +908,70 @@
         };
 
         const Tutorial = {
-            currentStep: 1, totalSteps: 3,
+            step: 1,
             next() {
-                document.getElementById(`slide-${this.currentStep}`).classList.remove('active', 'flex');
-                document.getElementById(`slide-${this.currentStep}`).classList.add('hidden');
-                document.getElementById(`dot-${this.currentStep}`).classList.remove('active', 'bg-teal-600', 'w-6');
-                this.currentStep++;
-                if (this.currentStep <= this.totalSteps) {
-                    document.getElementById(`slide-${this.currentStep}`).classList.remove('hidden');
-                    document.getElementById(`slide-${this.currentStep}`).classList.add('active', 'flex');
-                    document.getElementById(`dot-${this.currentStep}`).classList.add('active', 'bg-teal-600', 'w-6');
-                    if (this.currentStep === this.totalSteps) { document.getElementById('btn-next').classList.add('hidden'); document.getElementById('btn-start').classList.remove('hidden'); }
+                document.getElementById(`slide-${this.step}`).classList.add('hidden'); document.getElementById(`slide-${this.step}`).classList.remove('flex');
+                document.getElementById(`dot-${this.step}`).className = "w-2 h-2 rounded-full bg-slate-200 transition-all duration-300";
+                this.step++;
+                if (this.step <= 3) {
+                    document.getElementById(`slide-${this.step}`).classList.remove('hidden'); document.getElementById(`slide-${this.step}`).classList.add('flex');
+                    document.getElementById(`dot-${this.step}`).className = "w-6 h-2 rounded-full bg-teal-600 transition-all duration-300";
+                    if (this.step === 3) { document.getElementById('btn-next').classList.add('hidden'); document.getElementById('btn-start').classList.remove('hidden'); }
                 }
             },
             finish() { document.getElementById('tutorial-modal').classList.add('hidden'); GameController.loadNewCase(); }
         };
 
         const GameController = {
+            currentTimeLimit: CONFIG.BASE_TIME,
             loadNewCase() {
                 TimerController.stop();
-                const currentLevel = AppState.currentLevel;
-                let timeLimit = CONFIG.BASE_TIME;
-                if (currentLevel > 1) timeLimit = Math.max(60, CONFIG.BASE_TIME - ((currentLevel - 1) * 5));
-                
-                const newCase = CaseGenerator.generate(currentLevel);
+                const level = AppState.currentLevel;
+                const timeLimit = Math.max(60, CONFIG.BASE_TIME - ((level - 1) * 5));
+                this.currentTimeLimit = timeLimit;
+
+                const newCase = CaseGenerator.generate(level);
                 AppState.setCurrentCase(newCase);
-                
                 this.updateUI(newCase);
                 this.setupOptions(newCase);
                 this.clearResults();
                 AppState.updateLevelUI();
-                
+
                 ChatSystem.setupSuggestions();
                 document.getElementById('chat-container').innerHTML = '';
                 ChatSystem.chatHistory = [];
                 ChatSystem.updateAIStatus(true);
-                
+
                 const introMsg = `สวัสดีครับ ผมเป็นเจ้าของของ ${newCase.name} ครับ`;
                 ChatSystem.addMessage('ai', introMsg);
                 ChatSystem.chatHistory.push({ role: "model", parts: [{ text: introMsg }] });
-                
-                this.showIntro(newCase, timeLimit);
+
+                document.getElementById('difficulty-text').innerText = `Level ${level}`;
+                this.showIntro(timeLimit);
                 Navigation.showSection('history');
-                
-                const m = Math.floor(timeLimit / 60); const s = timeLimit % 60;
-                document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                this.currentTimeLimit = timeLimit;
+
+                const m = Math.floor(timeLimit/60), s = timeLimit%60;
+                document.getElementById('timer-display').innerText = `${m}:${s<10?'0'+s:s}`;
             },
-            updateUI(caseData) {
-                document.getElementById('info-name').innerText = caseData.name;
-                document.getElementById('info-signalment').innerText = caseData.info.signalment;
-                document.getElementById('info-cc').innerText = caseData.info.cc;
-                document.getElementById('badge-sex').innerText = caseData.info.signalment.includes('Male') ? 'Male' : 'Female';
-                document.getElementById('badge-weight').innerText = caseData.info.weight + ' kg';
-                document.getElementById('history-underlying').innerText = caseData.history.underlying;
-                document.getElementById('history-meds').innerText = caseData.history.meds;
-                document.getElementById('history-img').src = caseData.img;
-                document.getElementById('intro-img-mini').src = caseData.img;
-                document.getElementById('intro-patient-name').innerText = caseData.name;
-                document.getElementById('intro-narrative').innerText = caseData.scenario;
-                document.getElementById('difficulty-text').innerText = `Level ${AppState.currentLevel}`;
+            updateUI(c) {
+                document.getElementById('info-name').innerText = c.name;
+                document.getElementById('info-signalment').innerText = c.info.signalment;
+                document.getElementById('info-cc').innerText = c.info.cc;         // ✅ cc_display
+                document.getElementById('badge-sex').innerText = c.info.signalment.includes('Male') ? 'Male' : 'Female';
+                document.getElementById('badge-weight').innerText = c.info.weight + ' kg';
+                document.getElementById('history-underlying').innerText = c.history.underlying;
+                document.getElementById('history-meds').innerText = c.history.meds;
+                document.getElementById('history-img').src = c.img;
+                document.getElementById('intro-img-mini').src = c.img;
+                document.getElementById('intro-patient-name').innerText = c.name;
+                document.getElementById('intro-narrative').innerText = c.scenario;  // ✅ cc_display
             },
-            setupOptions(caseData) {
+            setupOptions(c) {
                 const d = document.getElementById('final-diag'); const t = document.getElementById('final-treat');
-                d.innerHTML = '<option value="">-- เลือกโรค --</option>'; t.innerHTML = '<option value="">-- เลือกการรักษา --</option>';
-                caseData.correct.options.d.forEach(o => d.innerHTML += `<option value="${o}">${o}</option>`);
-                caseData.correct.options.t.forEach(o => t.innerHTML += `<option value="${o}">${o}</option>`);
+                d.innerHTML = '<option value="">-- เลือกโรค --</option>';
+                t.innerHTML = '<option value="">-- เลือกการรักษา --</option>';
+                c.correct.options.d.forEach(o => d.innerHTML += `<option value="${o}">${o}</option>`);
+                c.correct.options.t.forEach(o => t.innerHTML += `<option value="${o}">${o}</option>`);
             },
             clearResults() {
                 document.getElementById('physical-results').innerHTML = '';
@@ -901,9 +980,9 @@
                 document.getElementById('progress-note').value = '';
                 lucide.createIcons();
             },
-            showIntro(caseData, timeLimit) {
-                const m = Math.floor(timeLimit / 60); const s = timeLimit % 60;
-                document.getElementById('start-time-text').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            showIntro(timeLimit) {
+                const m = Math.floor(timeLimit/60), s = timeLimit%60;
+                document.getElementById('start-time-text').innerText = `${m}:${s<10?'0'+s:s}`;
                 document.getElementById('score-modal').classList.add('hidden');
                 document.getElementById('timeout-modal').classList.add('hidden');
                 document.getElementById('intro-modal').classList.remove('hidden');
