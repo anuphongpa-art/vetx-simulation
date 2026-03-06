@@ -1014,10 +1014,23 @@ Output ONLY dialogue.`;
                 document.getElementById('score-modal').classList.add('hidden');
                 document.getElementById('timeout-modal').classList.add('hidden');
                 document.getElementById('intro-modal').classList.remove('hidden');
+                // ซ่อน FAB ระหว่าง intro
+                const fabM = document.querySelector('#chat-fab-mobile')?.parentElement;
+                const fabD = document.getElementById('chat-fab-desktop');
+                if (fabM) fabM.style.display = 'none';
+                if (fabD) fabD.style.display = 'none';
+                // ปิด chat ถ้าเปิดอยู่
+                if (AppState.isChatOpen) ChatSystem.toggle();
                 lucide.createIcons();
             },
             startCase() {
                 document.getElementById('intro-modal').classList.add('hidden');
+                // แสดง FAB หลังกดรับเคส
+                const isMobile = window.innerWidth < 768;
+                const fabM = document.querySelector('#chat-fab-mobile')?.parentElement;
+                const fabD = document.getElementById('chat-fab-desktop');
+                if (isMobile) { if (fabM) fabM.style.display = 'block'; }
+                else { if (fabD) fabD.style.display = 'flex'; }
                 TimerController.start(this.currentTimeLimit);
             },
             nextCase() { this.loadNewCase(); }
