@@ -40,11 +40,11 @@
                     onAuthStateChanged(this.auth, (user) => { this.user = user; });
                 } catch (e) { console.log("Offline Mode Active"); }
             },
-            async saveProgress(vetName, level, totalCasesSolved) {
+            async saveProgress(vetName, vetUni, level, totalCasesSolved) {
                 if (!this.db || !this.user) return;
                 try {
                     const userRef = doc(this.db, 'artifacts', this.appId, 'public', 'data', 'leaderboard', this.user.uid);
-                    await setDoc(userRef, { name: vetName, university: this.vetUni, level, totalCasesSolved, updatedAt: serverTimestamp() });
+                    await setDoc(userRef, { name: vetName, university: vetUni, level, totalCasesSolved, updatedAt: serverTimestamp() });
                 } catch (e) {}
             },
             async getLeaderboard() {
@@ -664,7 +664,7 @@
                 const required = this.currentLevel + 1;
                 let leveledUp = false;
                 if (this.casesSolvedInLevel >= required) { this.currentLevel++; this.casesSolvedInLevel = 0; leveledUp = true; }
-                if (window.FirebaseApp) window.FirebaseApp.saveProgress(this.vetName, this.currentLevel, this.totalCasesSolved);
+                if (window.FirebaseApp) window.FirebaseApp.saveProgress(this.vetName, this.vetUni, this.currentLevel, this.totalCasesSolved);
                 this.updateLevelUI();
                 return leveledUp;
             },
