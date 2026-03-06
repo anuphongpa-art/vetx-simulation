@@ -302,6 +302,7 @@
                     <option value="CU"> จุฬาลงกรณ์มหาวิทยาลัย (CU)</option>
                     <option value="KU"> มหาวิทยาลัยเกษตรศาสตร์ (KU)</option>
                     <option value="MU"> มหาวิทยาลัยมหิดล (MU)</option>
+                    <option value="KKU">🟡 มหาวิทยาลัยขอนแก่น (KKU)</option>
                     <option value="OTHER"> อื่นๆ</option>
                 </select>
                 <i data-lucide="chevron-down" class="absolute right-4 top-4 w-4 h-4 text-slate-400 pointer-events-none"></i>
@@ -393,9 +394,29 @@
             </div>
             <div class="p-8 text-center">
                 <p id="result-desc" class="text-slate-600 font-medium mb-6 text-lg"></p>
-                <div class="bg-slate-50 p-5 rounded-2xl text-left text-sm space-y-3 border border-slate-200 shadow-inner mb-6">
-                    <div><span class="text-slate-400 block mb-1 font-bold uppercase tracking-wider text-[10px]">เฉลยโรค</span><span id="ans-diag" class="font-bold text-slate-800">-</span></div>
-                    <div class="border-t border-slate-200 pt-2"><span class="text-slate-400 block mb-1 font-bold uppercase tracking-wider text-[10px]">เฉลยการรักษา</span><span id="ans-treat" class="font-bold text-slate-800">-</span></div>
+                <div class="bg-slate-50 rounded-2xl text-left text-sm border border-slate-200 shadow-inner mb-6 overflow-hidden">
+                    <div class="p-5 space-y-3">
+                        <div><span class="text-slate-400 block mb-1 font-bold uppercase tracking-wider text-[10px]">เฉลยโรค</span><span id="ans-diag" class="font-bold text-slate-800">-</span></div>
+                        <div class="border-t border-slate-200 pt-2"><span class="text-slate-400 block mb-1 font-bold uppercase tracking-wider text-[10px]">เฉลยการรักษา</span><span id="ans-treat" class="font-bold text-slate-800">-</span></div>
+                    </div>
+                    <button onclick="DiagnosisHandler.toggleExplanation()" class="w-full flex items-center justify-between px-5 py-3 bg-teal-50 border-t border-teal-100 text-teal-700 hover:bg-teal-100 transition active:scale-[0.99]">
+                        <span class="text-xs font-bold uppercase tracking-wider flex items-center gap-2"><i data-lucide="book-open" class="w-3.5 h-3.5"></i> ดูนิยามวิชาการ</span>
+                        <i id="explanation-chevron" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200"></i>
+                    </button>
+                    <div id="explanation-box" class="hidden px-5 pb-5 pt-3 bg-white border-t border-teal-100 space-y-3 text-[13px] leading-relaxed text-slate-600">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-teal-600 mb-1">🔬 นิยามโรค (Disease Definition)</p>
+                            <p id="exp-diag-text" class="text-slate-700"></p>
+                        </div>
+                        <div class="border-t border-slate-100 pt-3">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-teal-600 mb-1">💊 หลักการรักษา (Treatment Rationale)</p>
+                            <p id="exp-treat-text" class="text-slate-700"></p>
+                        </div>
+                        <div class="border-t border-slate-100 pt-3">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-amber-600 mb-1">⚡ Clinical Pearl</p>
+                            <p id="exp-tip-text" class="text-slate-700"></p>
+                        </div>
+                    </div>
                 </div>
                 <button onclick="GameController.nextCase()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-slate-700 transition active:scale-95">ทำเคสถัดไป</button>
             </div>
@@ -431,10 +452,13 @@
             diseases: [
                 {
                     id: 'parvo', name: 'Parvovirus',
-                    // 👁 ผู้เล่นเห็น: คลุมเครือ
                     cc_display: 'ซึม อาเจียน ท้องเสีย ไม่กินข้าวหลายวัน',
-                    // 🤖 AI รู้: ข้อมูลครบ
                     cc_full:    'อาเจียนเป็นเลือด ถ่ายเหลวเหม็นคาวรุนแรง ซึมมาก',
+                    explanation: {
+                        diag: 'โรคพาร์โวไวรัส เกิดจากไวรัส CPV-2 ทำลายเยื่อบุลำไส้และไขกระดูก ทำให้ท้องเสียเป็นเลือด อาเจียนรุนแรง และเม็ดเลือดขาวต่ำมาก พบบ่อยในสุนัขวัยรุ่นที่ไม่ได้รับวัคซีน',
+                        treat: 'ไม่มียาฆ่าไวรัสโดยตรง รักษาแบบประคับประคอง (Supportive Care) ได้แก่ น้ำเกลือ IV แก้ขาดน้ำ ยาปฏิชีวนะป้องกันการติดเชื้อซ้ำ และยาแก้อาเจียน',
+                        tip: 'วัคซีนพาร์โวมีประสิทธิภาพสูงมาก การฉีดวัคซีนตามกำหนดป้องกันได้เกือบ 100%'
+                    },
                     symptoms: { ga: 'Severe dehydration (8%), Lethargic', vitals: 'High Fever (T 40.5), HR 160', abdomen: 'Fluid filled loops', heart_lung: 'Normal' },
                     lab: { cbc: 'Severe Leukopenia (WBC 2,000)', chem: 'Hypoglycemia', ua: '-' },
                     imaging: { xray: 'Gas filled intestinal loops', ultra: 'Thickened intestinal wall' },
@@ -445,6 +469,11 @@
                     id: 'fb', name: 'Gastric Foreign Body',
                     cc_display: 'อาเจียน ไม่กินข้าว ถ่ายน้อยลง',
                     cc_full:    'อาเจียนทุกครั้งหลังกินอาหาร ซึม ถ่ายอุจจาระน้อยลงมาก',
+                    explanation: {
+                        diag: 'สิ่งแปลกปลอมในกระเพาะ (เช่น ผ้า หิน กระดูก) อุดทางออกกระเพาะ ทำให้อาเจียนทุกครั้งหลังกิน หากปล่อยไว้กระเพาะอาจทะลุและติดเชื้อในช่องท้อง',
+                        treat: 'ผ่าตัด Gastrotomy เปิดกระเพาะนำสิ่งแปลกปลอมออกโดยตรง รอให้ผ่านเองไม่ได้ เพราะยิ่งรอยิ่งเสี่ยง',
+                        tip: 'ของเล่นที่แตกง่ายและเชือกผ้าเป็นสิ่งแปลกปลอมที่พบบ่อยที่สุด ควรเฝ้าระวัง'
+                    },
                     symptoms: { ga: 'Alert but painful', vitals: 'T 38.5, HR 120', abdomen: 'Painful cranial abdomen', heart_lung: 'Normal' },
                     lab: { cbc: 'Normal', chem: 'Mild Hypokalemia', ua: '-' },
                     imaging: { xray: 'Radiopaque object in stomach', ultra: 'Acoustic shadowing in stomach' },
@@ -455,6 +484,11 @@
                     id: 'pyo', name: 'Pyometra (Closed)', fixedSex: 'Female',
                     cc_display: 'ซึม กินน้ำเยอะผิดปกติ ท้องดูโตขึ้น',
                     cc_full:    'ซึม กินน้ำเยอะ ฉี่เยอะ ท้องกาง มีไข้ ไม่กินอาหาร',
+                    explanation: {
+                        diag: 'มดลูกอักเสบสะสมหนอง (Pyometra) เกิดหลังรอบเป็นสัดในสุนัขเมียที่ไม่ทำหมัน ทำให้ซึม กินน้ำมาก ท้องโต อาจนำไปสู่ไตวายและติดเชื้อในกระแสเลือด',
+                        treat: 'ผ่าตัดเอามดลูก+รังไข่ออก (OHE) เป็นวิธีเดียวที่รักษาได้ขาด ต้องให้น้ำเกลือแก้ไตวายก่อนดมยาสลบ',
+                        tip: 'ทำหมันตั้งแต่อายุน้อยป้องกัน Pyometra และลดความเสี่ยงมะเร็งเต้านมได้'
+                    },
                     symptoms: { ga: 'Depressed, Dehydrated', vitals: 'T 39.5, HR 140', abdomen: 'Distended, Painful', heart_lung: 'Normal' },
                     lab: { cbc: 'High WBC (Neutrophilia)', chem: 'High BUN/Creatinine (Azotemia)', ua: '-' },
                     imaging: { xray: 'Tubular soft tissue density in abdomen', ultra: 'Fluid filled uterus (Hypoechoic)' },
@@ -465,6 +499,11 @@
                     id: 'stone', name: 'Cystic Calculi',
                     cc_display: 'ฉี่ลำบาก ร้องเจ็บ ฉี่บ่อยแต่ออกน้อย',
                     cc_full:    'ฉี่กะปริดกะปรอย มีเลือดปนในปัสสาวะ ร้องเจ็บขณะฉี่',
+                    explanation: {
+                        diag: 'นิ่วในกระเพาะปัสสาวะ เกิดจากแร่ธาตุตกผลึก (สตรูไวต์, แคลเซียมออกซาเลต) ทำให้ปัสสาวะลำบาก เจ็บ มีเลือดปน หากอุดท่อปัสสาวะอันตรายถึงชีวิต',
+                        treat: 'ผ่าตัด Cystotomy เปิดกระเพาะปัสสาวะนำนิ่วออก แล้วส่งวิเคราะห์ชนิดนิ่วเพื่อปรับอาหารป้องกันซ้ำ',
+                        tip: 'นิ่วสตรูไวต์ขนาดเล็กบางชนิดละลายได้ด้วยอาหารสูตรพิเศษโดยไม่ต้องผ่าตัด'
+                    },
                     symptoms: { ga: 'Normal', vitals: 'Normal', abdomen: 'Palpable hard mass in bladder', heart_lung: 'Normal' },
                     lab: { cbc: 'Normal', chem: 'Normal', ua: 'Hematuria, Crystals found' },
                     imaging: { xray: 'Radiopaque stones in bladder', ultra: 'Hyperechoic stones with shadowing' },
@@ -475,6 +514,11 @@
                     id: 'heartworm', name: 'Heartworm Disease',
                     cc_display: 'ไอบ่อย เหนื่อยง่าย ผอมลงเรื่อยๆ',
                     cc_full:    'ไอแห้งเรื้อรัง เหนื่อยง่ายมาก ท้องมาน น้ำหนักลดมาก',
+                    explanation: {
+                        diag: 'พยาธิหนอนหัวใจ (Dirofilaria immitis) ติดต่อผ่านยุง พยาธิตัวแก่อาศัยในหัวใจห้องขวาและหลอดเลือดปอด ทำให้ไอเรื้อรัง เหนื่อยง่าย และหัวใจล้มเหลว',
+                        treat: 'ฉีดยา Melarsomine เข้ากล้ามเนื้อฆ่าพยาธิตัวแก่ ต้องจำกัดการออกกำลังกาย 4-6 สัปดาห์ เพราะพยาธิที่ตายอาจอุดหลอดเลือดปอด',
+                        tip: 'ป้องกันได้ง่ายด้วยยารายเดือน ราคาถูกกว่าค่ารักษาหลายสิบเท่า ควรให้ตลอดชีวิต'
+                    },
                     symptoms: { ga: 'Thin, Exercise Intolerance', vitals: 'T 38.5, HR 130', abdomen: 'Fluid thrill (Ascites)', heart_lung: 'Harsh lung sounds' },
                     lab: { cbc: 'Eosinophilia', chem: 'Normal', ua: '-' },
                     imaging: { xray: 'Reverse D shape heart', ultra: 'Worms visible in PA/Right Heart' },
@@ -485,6 +529,11 @@
                     id: 'pancreatitis', name: 'Pancreatitis',
                     cc_display: 'อาเจียน ไม่กินข้าว ดูเจ็บปวดมาก',
                     cc_full:    'ปวดท้องรุนแรง อาเจียนบ่อย ไม่กินอาหาร หลังกินอาหารมันๆ',
+                    explanation: {
+                        diag: 'ตับอ่อนอักเสบ เกิดเมื่อเอนไซม์ย่อยอาหารถูกกระตุ้นก่อนเวลา ทำให้ตับอ่อนย่อยตัวเอง สาเหตุหลักคือกินอาหารมันสูง สุนัขปวดท้องรุนแรง ยืนก้มหน้าก้นสูง (Prayer position)',
+                        treat: 'น้ำเกลือ IV แก้ขาดน้ำ ยาแก้ปวด (สำคัญมาก) ยาแก้อาเจียน และเริ่มอาหารอ่อนๆ เร็วที่สุดเท่าที่ทนได้',
+                        tip: 'งดอาหารมันและอาหารคนแก่สุนัขโดยเด็ดขาด โดยเฉพาะสุนัขมีประวัติตับอ่อนอักเสบ'
+                    },
                     symptoms: { ga: 'Painful, hunched posture (Prayer position)', vitals: 'T 39.5, HR 130', abdomen: 'Severe cranial abdominal pain', heart_lung: 'Normal' },
                     lab: { cbc: 'Mild Leukocytosis', chem: 'High Lipase/Amylase, Hyperlipidemia', ua: '-' },
                     imaging: { xray: 'Ground glass opacity cranial abdomen', ultra: 'Hyperechoic pancreas + peripancreatic fluid' },
@@ -495,6 +544,11 @@
                     id: 'gdv', name: 'GDV',
                     cc_display: 'ท้องโต หายใจเร็ว ซึมมาก เรอไม่ออก',
                     cc_full:    'ท้องโตอย่างรวดเร็วภายในชั่วโมง เรอไม่ออก ซึมมาก หายใจลำบาก',
+                    explanation: {
+                        diag: 'กระเพาะบิดและขยายตัวพร้อมกัน (GDV) ทำให้เลือดไหลเวียนผิดปกติ กระเพาะขาดเลือด และช็อคภายในชั่วโมง พบบ่อยในสุนัขพันธุ์ใหญ่หน้าอกลึก เช่น เกรทเดน โดเบอร์แมน',
+                        treat: 'ให้น้ำเกลือปริมาณมากแก้ช็อค ระบายแก๊สออก แล้วผ่าตัดหมุนกระเพาะกลับและตรึงไว้ (Gastropexy) ทันที หากช้าอัตราตายสูงมาก',
+                        tip: 'ไม่ควรให้สุนัขออกกำลังทันทีหลังกิน แบ่งอาหาร 2-3 มื้อ/วัน ลดความเสี่ยงได้'
+                    },
                     symptoms: { ga: 'Severely distressed, Tachycardia', vitals: 'T 38.0 (Shock), HR 180', abdomen: 'Tympanic, grossly distended', heart_lung: 'Rapid shallow breathing' },
                     lab: { cbc: 'Stress leukogram', chem: 'Elevated Lactate, Electrolyte imbalance', ua: '-' },
                     imaging: { xray: 'Double bubble sign (Compartmentalized gas)', ultra: 'Gastric torsion, reduced wall motility' },
@@ -505,6 +559,11 @@
                     id: 'ecainis', name: 'Ehrlichia canis',
                     cc_display: 'ซึม มีไข้ ไม่กินข้าว มีจุดแดงตามตัว',
                     cc_full:    'ซึม มีไข้สูง เบื่ออาหาร มีจุดเลือดออกตามผิวหนัง น้ำหนักลดมาก',
+                    explanation: {
+                        diag: 'เออร์ลิเคีย (Ehrlichia canis) แบคทีเรียติดต่อผ่านเห็บสุนัข เชื้ออาศัยในเม็ดเลือดขาวและทำลายเกล็ดเลือด ทำให้มีไข้ ซึม มีจุดเลือดออกตามตัว',
+                        treat: 'ยาปฏิชีวนะ Doxycycline กินต่อเนื่อง 28 วัน ห้ามหยุดก่อนกำหนดเพราะอาจกลายเป็นโรคเรื้อรังที่รักษายากกว่า',
+                        tip: 'ป้องกันเห็บด้วยยาหยดหรือยากิน และตรวจดูตัวสุนัขทุกครั้งหลังออกนอกบ้าน'
+                    },
                     symptoms: { ga: 'Depressed, Pale mucous membranes, Petechiae', vitals: 'T 40.0, HR 140', abdomen: 'Mild splenomegaly', heart_lung: 'Normal' },
                     lab: { cbc: 'Severe Thrombocytopenia, Anemia', chem: 'High Globulin, ALT elevated', ua: 'Proteinuria' },
                     imaging: { xray: 'Normal', ultra: 'Splenomegaly' },
@@ -515,6 +574,11 @@
                     id: 'choco', name: 'Chocolate Toxicity',
                     cc_display: 'กระสับกระส่าย อาเจียน ดูผิดปกติมาก',
                     cc_full:    'อาเจียน ท้องเสีย หัวใจเต้นเร็วมาก กระสับกระส่าย หลังกินช็อคโกแลต',
+                    explanation: {
+                        diag: 'สาร Theobromine ในช็อคโกแลตที่สุนัขกำจัดออกได้ช้า กระตุ้นหัวใจและระบบประสาท ทำให้หัวใจเต้นเร็วผิดปกติ กระสับกระส่าย สั่น และชักได้ ช็อคโกแลตดำอันตรายกว่านมมาก',
+                        treat: 'หากกินมาไม่เกิน 2 ชั่วโมง ทำให้อาเจียนด้วย Apomorphine แล้วให้ถ่านกัมมันต์ (Activated Charcoal) ดูดซับสารพิษที่เหลือ',
+                        tip: 'ช็อคโกแลตดำ 1 ออนซ์ เป็นพิษต่อสุนัข 10 กก. ได้ ควรเก็บให้พ้นมือสุนัขทุกชนิด'
+                    },
                     symptoms: { ga: 'Agitated, Hyperactive', vitals: 'T 40.2, HR 200 (Tachyarrhythmia)', abdomen: 'Normal', heart_lung: 'Cardiac arrhythmia' },
                     lab: { cbc: 'Normal', chem: 'Electrolyte imbalance', ua: 'Normal' },
                     imaging: { xray: 'Normal', ultra: 'Normal' },
@@ -525,6 +589,11 @@
                     id: 'heatstroke', name: 'Heat Stroke',
                     cc_display: 'ล้มพับ หอบ ตัวร้อนมาก หลังออกกำลังกาย',
                     cc_full:    'ล้มพับกะทันหัน หอบแรงมาก น้ำลายไหลเยอะ ตัวร้อนจัดหลังออกกำลังกายกลางแจ้ง',
+                    explanation: {
+                        diag: 'ฮีทสโตรก เกิดเมื่ออุณหภูมิร่างกายสูงเกิน 41°C จนระบบระบายความร้อนล้มเหลว ทำให้โปรตีนในเซลล์ถูกทำลาย อวัยวะหลายระบบล้มเหลว และเลือดแข็งตัวผิดปกติ',
+                        treat: 'เช็ดตัวด้วยน้ำธรรมดา (ไม่ใช้น้ำแข็ง) เปิดพัดลม ให้น้ำเกลือ IV หยุดทำให้เย็นเมื่ออุณหภูมิถึง 39.5°C เพื่อป้องกัน overshoot hypothermia',
+                        tip: 'ห้ามทิ้งสุนัขในรถจอดกลางแดด อุณหภูมิในรถสูงถึง 60°C ได้ภายใน 10 นาที'
+                    },
                     symptoms: { ga: 'Collapsed, Dull, Excessive salivation', vitals: 'T 42.0 (Severe Hyperthermia), HR 200', abdomen: 'Normal', heart_lung: 'Rapid panting' },
                     lab: { cbc: 'Hemoconcentration, DIC signs', chem: 'Elevated ALT/AST, AKI pattern', ua: 'Myoglobinuria' },
                     imaging: { xray: 'Normal', ultra: 'Normal' },
@@ -535,6 +604,11 @@
                     id: 'dm', name: 'Diabetes Mellitus',
                     cc_display: 'กินน้ำเยอะ ฉี่บ่อย ผอมลงเรื่อยๆ',
                     cc_full:    'กินน้ำเยอะผิดปกติมาก ฉี่บ่อย น้ำหนักลดมาก ตาขุ่นทั้งสองข้าง',
+                    explanation: {
+                        diag: 'เบาหวานในสุนัข (คล้าย Type 1) เกิดจากตับอ่อนผลิตอินซูลินไม่พอ น้ำตาลสูงทำให้กินน้ำมาก ปัสสาวะบ่อย น้ำหนักลด และน้ำตาลตกตะกอนในเลนส์ตาทำให้ตาขุ่น',
+                        treat: 'ฉีดอินซูลิน (NPH) ใต้ผิวหนังวันละ 2 ครั้งพร้อมอาหาร เจ้าของต้องเรียนรู้ฉีดเองที่บ้าน โรคต้องดูแลตลอดชีวิต',
+                        tip: 'สุนัขเมียที่ไม่ทำหมันเสี่ยงเบาหวานสูงกว่า เพราะฮอร์โมน Progesterone ต้านฤทธิ์อินซูลิน'
+                    },
                     symptoms: { ga: 'Thin body condition, Bilateral cataracts', vitals: 'T 38.5, HR 100', abdomen: 'Hepatomegaly', heart_lung: 'Normal' },
                     lab: { cbc: 'Normal', chem: 'Blood Glucose >400 mg/dL', ua: 'Glucosuria, Ketonuria' },
                     imaging: { xray: 'Hepatomegaly', ultra: 'Hepatic lipidosis pattern' },
@@ -545,6 +619,11 @@
                     id: 'ckd', name: 'Chronic Kidney Disease',
                     cc_display: 'เบื่ออาหาร อาเจียน ซึม ผอมลงมาก',
                     cc_full:    'เบื่ออาหารมาก อาเจียนบ่อย ซึม ปากเหม็นผิดปกติ ผอมลงมาก กินน้ำเยอะ',
+                    explanation: {
+                        diag: 'โรคไตเรื้อรัง เกิดจากการสูญเสียเนื้อไตถาวร ทำให้กรองของเสียไม่ได้ BUN/Creatinine สูง ไตไม่สามารถเข้มปัสสาวะได้ (Isosthenuria) สุนัขเบื่ออาหาร อาเจียน ปากเหม็น ผอมลงเรื่อยๆ',
+                        treat: 'น้ำเกลือ IV แก้ขาดน้ำ อาหารสูตรไต (ลดฟอสฟอรัส/โปรตีน) ยาจับฟอสฟอรัส ติดตามค่าเลือดทุก 3-6 เดือน รักษาได้แต่ไม่หาย',
+                        tip: 'น้ำสะอาดเพียงพอสำคัญมาก อาหารกระป๋องช่วยเพิ่มน้ำในแต่ละวันได้ดีกว่าอาหารแห้ง'
+                    },
                     symptoms: { ga: 'Thin, Pale mucous membranes, Uremic breath', vitals: 'T 37.5, HR 90', abdomen: 'Small irregular kidneys palpable', heart_lung: 'Normal' },
                     lab: { cbc: 'Non-regenerative Anemia', chem: 'High BUN/Creatinine, Hyperphosphatemia', ua: 'Isosthenuria (USG 1.012), Proteinuria' },
                     imaging: { xray: 'Small kidneys bilaterally', ultra: 'Small irregular hyperechoic kidneys' },
@@ -555,6 +634,11 @@
                     id: 'lepto', name: 'Leptospirosis',
                     cc_display: 'มีไข้ ตาเหลืองนิดหน่อย อาเจียน ดูเจ็บตัว',
                     cc_full:    'มีไข้สูง ตาเหลือง อาเจียน ปัสสาวะน้อยลงมาก ปวดกล้ามเนื้อ หลังลุยน้ำท่วม',
+                    explanation: {
+                        diag: 'เลปโตสไปโรซิส เกิดจากแบคทีเรีย Leptospira ที่ปนเปื้อนในน้ำหรือดินชื้นแฉะ ติดจากปัสสาวะหนู ทำลายตับและไตพร้อมกัน ทำให้ตาเหลือง ปัสสาวะน้อย ติดต่อสู่คนได้ (Zoonosis)',
+                        treat: 'ยา Penicillin กำจัดเชื้อในกระแสเลือด ตามด้วย Doxycycline กำจัดเชื้อในไต น้ำเกลือ IV ปริมาณมาก รายรุนแรงอาจต้อง Dialysis',
+                        tip: 'ติดต่อสู่คนได้ เจ้าของควรสวมถุงมือและล้างมือทุกครั้งที่สัมผัสสุนัขป่วยหรือปัสสาวะ'
+                    },
                     symptoms: { ga: 'Jaundiced, Painful to touch', vitals: 'T 40.5, HR 150', abdomen: 'Hepatomegaly + Renomegaly', heart_lung: 'Normal' },
                     lab: { cbc: 'Leukocytosis, Thrombocytopenia', chem: 'High BUN/Creatinine + Elevated Bilirubin', ua: 'Bilirubinuria, Hematuria' },
                     imaging: { xray: 'Normal', ultra: 'Enlarged kidneys, hyperechoic cortex' },
@@ -565,6 +649,11 @@
                     id: 'kennel', name: 'Kennel Cough',
                     cc_display: 'ไอบ่อย บางทีอาเจียนหลังไอ',
                     cc_full:    'ไอแห้งเสียงดังเหมือนห่าน บางทีอาเจียนหลังไอ หลังกลับจากโรงแรมสัตว์เลี้ยง',
+                    explanation: {
+                        diag: 'หวัดสุนัข (Kennel Cough) ติดเชื้อ Bordetella bronchiseptica ร่วมกับไวรัส ติดต่อเร็วมากในที่สุนัขอยู่รวมกัน อาการเด่นคือไอแห้งเสียงดังคล้ายห่าน กด trachea แล้วไอทันที',
+                        treat: 'ยาแก้ไอบรรเทาอาการ + ยา Doxycycline ครอบคลุม Bordetella รายไม่รุนแรงหายเองใน 1-2 สัปดาห์ ควรแยกสุนัขออกจากตัวอื่น',
+                        tip: 'วัคซีน Bordetella ทางจมูกให้ภูมิเร็วภายใน 72 ชั่วโมง เหมาะสำหรับฉีดก่อนฝากเลี้ยง'
+                    },
                     symptoms: { ga: 'Alert, Active', vitals: 'T 38.7, HR 100', abdomen: 'Normal', heart_lung: 'Tracheal sensitivity on palpation' },
                     lab: { cbc: 'Mild Leukocytosis', chem: 'Normal', ua: '-' },
                     imaging: { xray: 'Mild bronchointerstitial pattern', ultra: 'Normal' },
@@ -575,6 +664,11 @@
                     id: 'demodex', name: 'Demodicosis',
                     cc_display: 'ขนร่วงเป็นหย่อมๆ ผิวหนังแดง ดูผิดปกติ',
                     cc_full:    'ขนร่วงเป็นหย่อมๆ รอบตาและขา ผิวหนังแดง มีสะเก็ด ไม่ค่อยคัน',
+                    explanation: {
+                        diag: 'เดโมดิโคสิส เกิดจากไร Demodex canis ที่อาศัยในรูขุมขนตามปกติ เพิ่มจำนวนผิดปกติเมื่อภูมิคุ้มกันอ่อนแอ ทำให้ขนร่วงเป็นหย่อม ผิวแดง สิ่งสำคัญคือ ไม่ค่อยทำให้คัน',
+                        treat: 'ยากลุ่ม Isoxazoline (NexGard, Bravecto) ฆ่าไรได้ผลดีและปลอดภัย รักษาต่อเนื่อง 3-6 เดือน จนตรวจขูดผิวหนังเป็นลบ 2 ครั้งติดกัน',
+                        tip: 'ไม่ติดต่อสู่คนหรือสัตว์อื่น ไม่ต้องแยกสุนัขออก เพราะไร Demodex จำเพาะต่อโฮสต์มาก'
+                    },
                     symptoms: { ga: 'Multifocal alopecia, Erythema, Comedones', vitals: 'T 38.5, HR 90', abdomen: 'Normal', heart_lung: 'Normal' },
                     lab: { cbc: 'Normal', chem: 'Normal', ua: '-' },
                     imaging: { xray: 'Normal', ultra: 'Normal' },
@@ -626,7 +720,8 @@
                     history: { underlying: 'None', meds: 'None' },
                     results: { physical: disease.symptoms, lab: disease.lab, imaging: disease.imaging },
                     chat: { qa_pairs: disease.chat.questions.map((q, i) => ({ question: q, answer: disease.chat.answers[i] })) },
-                    correct: { diag: disease.correct.diag, treat: disease.correct.treat, options: { d: diagOptions.sort(), t: treatOptions.sort() } }
+                    correct: { diag: disease.correct.diag, treat: disease.correct.treat, options: { d: diagOptions.sort(), t: treatOptions.sort() } },
+                    explanation: disease.explanation || null
                 };
             }
 
@@ -908,7 +1003,26 @@ Output ONLY dialogue.`;
                 }
                 document.getElementById('ans-diag').innerText = AppState.currentCase.correct.diag;
                 document.getElementById('ans-treat').innerText = AppState.currentCase.correct.treat;
+                // Populate explanation
+                const exp = AppState.currentCase.explanation;
+                if (exp) {
+                    document.getElementById('exp-diag-text').innerText = exp.diag;
+                    document.getElementById('exp-treat-text').innerText = exp.treat;
+                    document.getElementById('exp-tip-text').innerText = exp.tip;
+                }
+                // Reset explanation state
+                document.getElementById('explanation-box').classList.add('hidden');
+                const chev = document.getElementById('explanation-chevron');
+                if (chev) chev.style.transform = 'rotate(0deg)';
                 modal.classList.remove('hidden');
+                lucide.createIcons();
+            },
+            toggleExplanation() {
+                const box = document.getElementById('explanation-box');
+                const chev = document.getElementById('explanation-chevron');
+                const isHidden = box.classList.contains('hidden');
+                box.classList.toggle('hidden', !isHidden);
+                if (chev) chev.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
                 lucide.createIcons();
             }
         };
