@@ -294,7 +294,7 @@
                     <option value="">🏫 เลือกมหาวิทยาลัย</option>
                     <option value="CU"> จุฬาลงกรณ์มหาวิทยาลัย (CU)</option>
                     <option value="KU"> มหาวิทยาลัยเกษตรศาสตร์ (KU)</option>
-                    <option value="MU"> มหาวิทยาลัยเชียงใหม่ (MU)</option>
+                    <option value="MU"> มหาวิทยาลัยมหิดล (MU)</option>
                     <option value="OTHER"> อื่นๆ</option>
                 </select>
                 <i data-lucide="chevron-down" class="absolute right-4 top-4 w-4 h-4 text-slate-400 pointer-events-none"></i>
@@ -1018,10 +1018,8 @@ Output ONLY dialogue.`;
                     document.getElementById('exp-treat-text').innerText = exp.treat;
                     document.getElementById('exp-tip-text').innerText = exp.tip;
                 }
-                // Reset explanation state
-                document.getElementById('explanation-box').classList.add('hidden');
-                const chev = document.getElementById('explanation-chevron');
-                if (chev) chev.style.transform = 'rotate(0deg)';
+                // Reset explanation sheet state
+                document.getElementById('explanation-sheet').classList.add('hidden');
                 modal.classList.remove('hidden');
                 lucide.createIcons();
             },
